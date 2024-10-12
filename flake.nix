@@ -3,29 +3,38 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
-    nix-darwin.url = "github:LnL7/nix-darwin";
-    nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
+    darwin = {
+      url = "github:LnL7/nix-darwin";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    home-manager = {
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = inputs@{ self, nix-darwin, nixpkgs }:
+  outputs = inputs@{ self, nixpkgs, darwin, home-manager }:
   let
-    configuration = { pkgs, ... }: {
+    darwinConfig = { pkgs, ... }: {
       nixpkgs.hostPlatform = "aarch64-darwin";
 
-      # Auto upgrade nix package and the daemon service.
+      # backcompat: read `darwin-rebuild changelog` before changing
+      system.stateVersion = 5;
+
       services.nix-daemon.enable = true;
       nix.package = pkgs.nix;
       nix.settings.experimental-features = "nix-command flakes";
-
-      # Set Git commit hash for darwin-version.
       system.configurationRevision = self.rev or self.dirtyRev or null;
 
-      # Used for backwards compatibility, please read the changelog before changing.
-      # $ darwin-rebuild changelog
-      system.stateVersion = 5;
-
       programs.zsh.enable = true;
-      environment.systemPackages = [];
+
+      environment.systemPackages = [
+        pkgs.deno
+        pkgs.dhall
+        pkgs.dhall-json
+        pkgs.neofetch
+        pkgs.uv
+      ];
 
       system.defaults = {
         dock.autohide = true;
@@ -44,11 +53,8 @@
 
       homebrew = {
         enable = true;
-        brews = [
-          "dhall"
-          "dhall-json"
-          "uv"
-        ];
+        onActivation.cleanup = "uninstall";
+        brews = [];
         casks = [
           "alt-tab"
           "iterm2"
@@ -57,10 +63,24 @@
 
       security.pam.enableSudoTouchIdAuth = true;
     };
+    homeConfig = { pkgs, ... }: {
+      home.stateVersion = "24.05";
+      # programs.home-manager.enable = true;
+      home.packages = with pkgs; [];
+      # home.sessionVariables = {EDITOR = "vim"; };
+    };
   in
   {
-    darwinConfigurations."Polygon-N002HCY2C5" = nix-darwin.lib.darwinSystem {
-      modules = [ configuration ];
+    darwinConfigurations."Polygon-N002HCY2C5" = darwin.lib.darwinSystem {
+      modules = [
+        darwinConfig
+        home-manager.darwinModules.home-manager {
+          home-manager.useGlobalPkgs = true;
+          home-manager.useUserPackages = true;
+          home-manager.verbose = true;
+          home-manager.users.eriggs = homeConfig;
+        }
+      ];
     };
   };
 }
