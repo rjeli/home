@@ -98,7 +98,7 @@
         shellAliases = {
           switch = "darwin-rebuild switch --flake ~/repos/home";
           history = "history 0";
-          subl = "/Applications/Sublime Text.app/Contents/SharedSupport/bin/subl";
+          subl = ''"/Applications/Sublime Text.app/Contents/SharedSupport/bin/subl"'';
         };
         # added to .zshrc
         initExtra = ''
