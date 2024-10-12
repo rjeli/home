@@ -26,6 +26,8 @@
       nix.package = pkgs.nix;
       nix.settings.experimental-features = "nix-command flakes";
 
+      # todo figure out how to not hardcode?
+      # https://github.com/nix-community/home-manager/issues/4026
       users.users.eriggs = {
         name = "eriggs";
         home = "/Users/eriggs";
@@ -112,15 +114,18 @@
       inoremap jk <Esc>
       '';
 
-      /*
-      programs.vim = {
+      programs.git = {
         enable = true;
-        defaultEditor = true;
-        extraConfig = ''
-        inoremap jk <Esc>
-        '';
+        userName = "rjeli";
+        userEmail = "eli@rje.li";
+        aliases = {
+          s = "status";
+          co = "checkout";
+        };
+        extraConfig = {
+          push.autoSetupRemote = true;
+        };
       };
-      */
     };
   in
   {
