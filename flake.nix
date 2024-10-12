@@ -85,6 +85,8 @@
 
       programs.zsh = {
         enable = true;
+        enableCompletion = true;
+        enableVteIntegration = true;
         defaultKeymap = "emacs";
         history = {
           # save timestamp
