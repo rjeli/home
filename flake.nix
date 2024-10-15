@@ -77,9 +77,13 @@
       ];
 
       home.packages = with pkgs; [
+        emacs29-macport
         deno
         dhall
+        dhall-docs
         dhall-json
+        dhall-lsp-server
+        (sage.override { requireSageTests = false; })
         uv
       ];
 
@@ -104,17 +108,26 @@
         initExtra = ''
         setopt INC_APPEND_HISTORY
 
-        function parse_git_branch() {
-          git branch 2>/dev/null | sed -ne 's/^\* \(.*\)/[\1]/p'
+        function prompt_git_branch() {
+          git branch 2>/dev/null | sed -ne 's/^\* \(.*\)/ [\1]/p'
         }
+        function prompt_nix_shell() {
+          [[ -n $IN_NIX_SHELL ]] && echo " $name"
+        }
+
         setopt PROMPT_SUBST
-        export PROMPT='%n %F{green}%1~ %F{blue}$(parse_git_branch)%f %% '
+        export PROMPT='%F{green}%1~%F{cyan}$(prompt_nix_shell)%F{blue}$(prompt_git_branch)%f %% '
         '';
       };
 
       home.file.".vimrc".text = ''
       inoremap jk <Esc>
       '';
+
+      home.file.".emacs.d" = {
+        source = ./.emacs.d;
+        recursive = true;
+      };
 
       programs.git = {
         enable = true;
