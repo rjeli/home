@@ -59,12 +59,13 @@
         casks = [
           "alt-tab"
           "iterm2"
+          "eloston-chromium"
         ];
       };
 
       security.pam.enableSudoTouchIdAuth = true;
     };
-    homeConfig = { pkgs, ... }: {
+    homeConfig = { pkgs, config, ... }: {
       home.stateVersion = "24.05";
 
       home.sessionVariables = {
@@ -76,15 +77,17 @@
         "/opt/homebrew/bin"
       ];
 
-      home.packages = with pkgs; [
-        emacs29-macport
-        deno
-        dhall
-        dhall-docs
-        dhall-json
-        dhall-lsp-server
+      home.packages = (with pkgs; [ 
+        deno 
+        dhall dhall-docs dhall-json dhall-lsp-server
+        jq
         (sage.override { requireSageTests = false; })
         uv
+        ]) ++ [
+      (let emacs = (pkgs.emacs29-macport.override {
+        withTreeSitter = true; }); in (pkgs.emacsPackagesFor
+        emacs).emacsWithPackages (epkgs: with epkgs; [
+        treesit-grammars.with-all-grammars ])) 
       ];
 
       programs.zsh = {
@@ -124,9 +127,11 @@
       inoremap jk <Esc>
       '';
 
-      home.file.".emacs.d" = {
-        source = ./.emacs.d;
-        recursive = true;
+      home.file.".emacs.d/early-init.el" = {
+        source = config.lib.file.mkOutOfStoreSymlink "/Users/eriggs/repos/home/.emacs.d/early-init.el";
+      };
+      home.file.".emacs.d/init.el" = {
+        source = config.lib.file.mkOutOfStoreSymlink "/Users/eriggs/repos/home/.emacs.d/init.el";
       };
 
       programs.git = {
