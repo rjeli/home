@@ -58,8 +58,9 @@
         brews = [];
         casks = [
           "alt-tab"
-          "iterm2"
           "eloston-chromium"
+          "iterm2"
+          "zotero"
         ];
       };
 
@@ -81,13 +82,14 @@
         deno 
         dhall dhall-docs dhall-json dhall-lsp-server
         jq
+        ripgrep
         (sage.override { requireSageTests = false; })
         uv
-        ]) ++ [
-      (let emacs = (pkgs.emacs29-macport.override {
-        withTreeSitter = true; }); in (pkgs.emacsPackagesFor
-        emacs).emacsWithPackages (epkgs: with epkgs; [
-        treesit-grammars.with-all-grammars ])) 
+      ]) ++ [
+        (let emacs = (pkgs.emacs29-macport.override {
+          withTreeSitter = true; }); in (pkgs.emacsPackagesFor
+          emacs).emacsWithPackages (epkgs: with epkgs; [
+          treesit-grammars.with-all-grammars ])) 
       ];
 
       programs.zsh = {
