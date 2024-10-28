@@ -144,6 +144,10 @@
           s = "status";
           co = "checkout";
         };
+        ignores = [
+          ".DS_Store"
+          "*.sublime-workspace"
+        ];
         extraConfig = {
           push.autoSetupRemote = true;
         };
