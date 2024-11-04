@@ -15,6 +15,7 @@
 
   outputs = inputs@{ self, nixpkgs, darwin, home-manager }:
   let
+
     darwinConfig = { pkgs, ... }: {
       nixpkgs.hostPlatform = "aarch64-darwin";
 
@@ -41,9 +42,13 @@
         dock.autohide = true;
         trackpad.Clicking = true;
         finder = {
+          AppleShowAllFiles = true;                 # show hidden
           AppleShowAllExtensions = true;
           ShowPathbar = true;
+          FXPreferredViewStyle = "Nlsv";            # list view
           FXEnableExtensionChangeWarning = false;
+          _FXShowPosixPathInTitle = true;
+          CreateDesktop = false;                    # no icons on desktop
         };
       };
 
@@ -55,17 +60,22 @@
       homebrew = {
         enable = true;
         onActivation.cleanup = "uninstall";
-        brews = [];
+        brews = [
+          "winetricks"
+          "zenity"
+        ];
         casks = [
           "alt-tab"
           "eloston-chromium"
           "iterm2"
+          "wine-stable"
           "zotero"
         ];
       };
 
       security.pam.enableSudoTouchIdAuth = true;
     };
+
     homeConfig = { pkgs, config, ... }: {
       home.stateVersion = "24.05";
 
@@ -79,9 +89,14 @@
       ];
 
       home.packages = (with pkgs; [ 
+        # blender
         deno 
         dhall dhall-docs dhall-json dhall-lsp-server
         jq
+        neovim
+        pkg-config
+        qt5.qtbase qt5.qttools
+        radare2
         ripgrep
         (sage.override { requireSageTests = false; })
         uv
@@ -152,8 +167,16 @@
           push.autoSetupRemote = true;
         };
       };
+
+      programs.direnv = {
+        enable = true;
+        enableZshIntegration = true;
+        nix-direnv.enable = true;
+      };
     };
+
   in
+
   {
     darwinConfigurations."Polygon-N002HCY2C5" = darwin.lib.darwinSystem {
       modules = [
@@ -167,4 +190,5 @@
       ];
     };
   };
+
 }
