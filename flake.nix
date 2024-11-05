@@ -98,7 +98,7 @@
         qt5.qtbase qt5.qttools
         radare2
         ripgrep
-        # (sage.override { requireSageTests = false; })
+        (sage.override { requireSageTests = false; })
         uv
       ]) ++ [
         (let emacs = (pkgs.emacs29-macport.override {
