@@ -24,8 +24,19 @@
       system.stateVersion = 5;
 
       services.nix-daemon.enable = true;
+
       nix.package = pkgs.nix;
-      nix.settings.experimental-features = "nix-command flakes";
+      nix.settings = {
+        experimental-features = "nix-command flakes";
+        substituters = [
+          "https://cache.nixos.org"
+          "https://devenv.cachix.org"
+        ];
+        trusted-public-keys = [
+          "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
+          "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw="
+        ];
+      };
 
       # todo figure out how to not hardcode?
       # https://github.com/nix-community/home-manager/issues/4026
@@ -59,6 +70,7 @@
 
       homebrew = {
         enable = true;
+        global.autoUpdate = false;
         onActivation.cleanup = "uninstall";
         brews = [
           "winetricks"
@@ -67,9 +79,12 @@
         casks = [
           "alt-tab"
           "eloston-chromium"
+          "ghostty"
           "iterm2"
           "wine-stable"
           "zotero"
+
+          "ra3xdh/qucs-s/qucs-s@nightly"
         ];
       };
 
@@ -89,18 +104,29 @@
       ];
 
       home.packages = (with pkgs; [ 
-        # blender
-        deno 
-        dhall dhall-docs dhall-json dhall-lsp-server
+        # tools
+        devenv
         jq
         neovim
-        octave
         pkg-config
-        qt5.qtbase qt5.qttools
         radare2
         ripgrep
-        (sage.override { requireSageTests = false; })
         uv
+
+        # libs
+        qt5.qtbase qt5.qttools
+
+        # languages
+        deno 
+        dhall dhall-docs dhall-json dhall-lsp-server
+        octaveFull
+        (sage.override { requireSageTests = false; })
+
+        # blender
+        # (octaveFull.withPackages (opkgs: with opkgs; [ ltfat ]))
+        # (octave.withPackages (opkgs: with opkgs; [ symbolic splines ]))
+        # octavePackages.ltfat
+        # ((octave.override { enableQt = true; }).withPackages (opkgs: with opkgs; [ ltfat ]))
       ]) ++ [
         (let emacs = (pkgs.emacs29-macport.override {
           withTreeSitter = true; }); in (pkgs.emacsPackagesFor
@@ -126,19 +152,7 @@
           subl = ''"/Applications/Sublime Text.app/Contents/SharedSupport/bin/subl"'';
         };
         # added to .zshrc
-        initExtra = ''
-        setopt INC_APPEND_HISTORY
-
-        function prompt_git_branch() {
-          git branch 2>/dev/null | sed -ne 's/^\* \(.*\)/ [\1]/p'
-        }
-        function prompt_nix_shell() {
-          [[ -n $IN_NIX_SHELL ]] && echo " $name"
-        }
-
-        setopt PROMPT_SUBST
-        export PROMPT='%F{green}%1~%F{cyan}$(prompt_nix_shell)%F{blue}$(prompt_git_branch)%f %% '
-        '';
+        initExtra = (builtins.readFile ./.zshrc);
       };
 
       home.file.".vimrc".text = ''
