@@ -21,6 +21,7 @@
 
       system.configurationRevision = self.rev or self.dirtyRev or null;
       # backcompat: read `darwin-rebuild changelog` before changing
+      # todo:             ^ broken
       system.stateVersion = 5;
 
       services.nix-daemon.enable = true;
@@ -98,9 +99,11 @@
         EDITOR = "vim";
       };
       home.sessionPath = [
+        "${self}/bin"
         "$HOME/bin"
-        "$HOME/.cargo/bin"
+
         "/opt/homebrew/bin"
+        "$HOME/.cargo/bin"
       ];
 
       home.packages = (with pkgs; [ 
