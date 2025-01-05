@@ -19,7 +19,13 @@ cat >flake.nix <<'EOF'
       in with pkgs; {
         devShells.default = mkShell {
           packages = [
-            # nix packages here
+EOF
+
+for pkg in "$@"; do
+    echo "            $pkg" >>flake.nix
+done
+
+cat >>flake.nix <<'EOF'
           ];
         };
       }

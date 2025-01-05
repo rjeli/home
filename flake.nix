@@ -181,6 +181,8 @@
           ".DS_Store"
           "*.sublime-workspace"
           ".sublime/"
+          ".envrc"
+          ".direnv"
         ];
         extraConfig = {
           push.autoSetupRemote = true;
