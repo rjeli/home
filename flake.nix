@@ -18,13 +18,14 @@
 
     darwinConfig = { pkgs, ... }: {
       nixpkgs.hostPlatform = "aarch64-darwin";
+      nixpkgs.config.allowUnfree = true;
 
       system.configurationRevision = self.rev or self.dirtyRev or null;
       # backcompat: read `darwin-rebuild changelog` before changing
       # todo:             ^ broken
       system.stateVersion = 5;
 
-      services.nix-daemon.enable = true;
+      # services.nix-daemon.enable = true;
 
       nix.package = pkgs.nix;
       nix.settings = {
@@ -83,9 +84,9 @@
           "ghostty"
           "iterm2"
           "wine-stable"
+          "xquartz"
           "zotero"
-
-          "ra3xdh/qucs-s/qucs-s@nightly"
+          # "ra3xdh/qucs-s/qucs-s@nightly"
         ];
       };
 
@@ -109,21 +110,29 @@
       home.packages = (with pkgs; [ 
         # tools
         devenv
+        ffmpeg
         jq
         neovim
+        nmap
+        picocom
         pkg-config
-        radare2
+        # radare2
         ripgrep
         uv
 
         # libs
-        qt5.qtbase qt5.qttools
+        # qt5.qtbase qt5.qttools
 
         # languages
         deno 
         dhall dhall-docs dhall-json dhall-lsp-server
-        octaveFull
+        # octaveFull
         (sage.override { requireSageTests = false; })
+
+        # apps
+        # jadx
+        mpv
+        spotify
 
         # blender
         # (octaveFull.withPackages (opkgs: with opkgs; [ ltfat ]))
