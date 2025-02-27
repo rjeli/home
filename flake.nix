@@ -74,6 +74,8 @@
         enable = true;
         global.autoUpdate = false;
         onActivation.cleanup = "uninstall";
+        taps = [
+        ];
         brews = [
           "winetricks"
           "zenity"
@@ -98,13 +100,15 @@
 
       home.sessionVariables = {
         EDITOR = "vim";
+        PNPM_HOME = "$HOME/.pnpm";
       };
       home.sessionPath = [
         "${self}/bin"
-        "$HOME/bin"
-
         "/opt/homebrew/bin"
+        "$HOME/bin"
         "$HOME/.cargo/bin"
+        "$HOME/.deno/bin"
+        "$HOME/.pnpm"
       ];
 
       home.packages = (with pkgs; [ 
@@ -124,6 +128,9 @@
         # qt5.qtbase qt5.qttools
 
         # languages
+        nodejs
+        pnpm
+
         deno 
         dhall dhall-docs dhall-json dhall-lsp-server
         # octaveFull
@@ -161,7 +168,9 @@
         shellAliases = {
           switch = "darwin-rebuild switch --flake ~/repos/home";
           history = "history 0";
-          subl = ''"/Applications/Sublime Text.app/Contents/SharedSupport/bin/subl"'';
+          nixsh = "nix-shell --run 'exec zsh' -p";
+          subl = "'/Applications/Sublime Text.app/Contents/SharedSupport/bin/subl'";
+          code = "$HOME/Applications/'Visual Studio Code.app'/Contents/Resources/app/bin/code";
         };
         # added to .zshrc
         initExtra = (builtins.readFile ./.zshrc);
