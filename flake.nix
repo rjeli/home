@@ -116,13 +116,15 @@
         devenv
         ffmpeg
         jq
-        neovim
         nmap
         picocom
         pkg-config
         # radare2
         ripgrep
-        uv
+
+        # editors
+        neovim
+        vscodium
 
         # libs
         # qt5.qtbase qt5.qttools
@@ -130,6 +132,8 @@
         # languages
         nodejs
         pnpm
+
+        uv
 
         deno 
         dhall dhall-docs dhall-json dhall-lsp-server
