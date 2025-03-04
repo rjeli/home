@@ -92,7 +92,7 @@
         ];
       };
 
-      security.pam.enableSudoTouchIdAuth = true;
+      security.pam.services.sudo_local.touchIdAuth = true;
     };
 
     homeConfig = { pkgs, config, ... }: {
@@ -151,10 +151,12 @@
         # octavePackages.ltfat
         # ((octave.override { enableQt = true; }).withPackages (opkgs: with opkgs; [ ltfat ]))
       ]) ++ [
+      /* insecure
         (let emacs = (pkgs.emacs29-macport.override {
           withTreeSitter = true; }); in (pkgs.emacsPackagesFor
           emacs).emacsWithPackages (epkgs: with epkgs; [
           treesit-grammars.with-all-grammars ])) 
+          */
       ];
 
       programs.zsh = {
