@@ -1,3 +1,8 @@
+format: 
+
+```zsh
+% nix-shell -p nixfmt-rfc-style --run 'nixfmt flake.nix'
+```
 
 bump nix packages:
 
