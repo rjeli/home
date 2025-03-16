@@ -5,7 +5,6 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     darwin = {
       url = "github:LnL7/nix-darwin";
-      # url = "github:LnL7/nix-darwin/nix-darwin-24.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     home-manager = {
@@ -26,19 +25,10 @@
       # todo:             ^ broken
       system.stateVersion = 5;
 
-      # services.nix-daemon.enable = true;
-
-      nix.package = pkgs.nix;
+      # need newer nix for flake relative paths
+      nix.package = pkgs.nixVersions.nix_2_26;
       nix.settings = {
         experimental-features = "nix-command flakes";
-        substituters = [
-          "https://cache.nixos.org"
-          "https://devenv.cachix.org"
-        ];
-        trusted-public-keys = [
-          "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
-          "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw="
-        ];
       };
 
       # todo figure out how to not hardcode?

@@ -22,5 +22,13 @@ gc:
 # todo: --dry-run seems to do nothing
 ```
 
+cold install:
+
+```zsh
+% nix run nix-darwin/master#darwin-rebuild -- switch
+```
+
+(untested)
+
 inspo:
 - https://github.com/davish/setup
