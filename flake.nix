@@ -5,6 +5,7 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     darwin = {
       url = "github:LnL7/nix-darwin";
+      # url = "github:LnL7/nix-darwin/nix-darwin-24.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     home-manager = {
@@ -77,25 +78,27 @@
         taps = [
         ];
         brews = [
-          "winetricks"
           "zenity"
         ];
         casks = [
-          "alt-tab"
-          "eloston-chromium"
           "ghostty"
           "iterm2"
-          "wine-stable"
+          "alt-tab"
+          "eloston-chromium"
           "xquartz"
           "zotero"
-          # "ra3xdh/qucs-s/qucs-s@nightly"
         ];
       };
 
       security.pam.services.sudo_local.touchIdAuth = true;
     };
 
-    homeConfig = { pkgs, config, ... }: {
+    homeConfig = { pkgs, config, ... }: 
+
+    let
+      here = "${config.home.homeDirectory}/repos/home";
+
+    in {
       home.stateVersion = "24.05";
 
       home.sessionVariables = {
@@ -112,24 +115,24 @@
       ];
 
       home.packages = (with pkgs; [ 
-        # tools
+
+        # cli tools
+
         devenv
         ffmpeg
         jq
         nmap
         picocom
         pkg-config
-        # radare2
         ripgrep
 
         # editors
+
         neovim
         vscodium
 
-        # libs
-        # qt5.qtbase qt5.qttools
-
         # languages
+
         nodejs
         pnpm
 
@@ -141,6 +144,7 @@
         (sage.override { requireSageTests = false; })
 
         # apps
+
         # jadx
         mpv
         spotify
@@ -150,6 +154,7 @@
         # (octave.withPackages (opkgs: with opkgs; [ symbolic splines ]))
         # octavePackages.ltfat
         # ((octave.override { enableQt = true; }).withPackages (opkgs: with opkgs; [ ltfat ]))
+
       ]) ++ [
       /* insecure
         (let emacs = (pkgs.emacs29-macport.override {
@@ -172,7 +177,7 @@
           size = 999999999;
         };
         shellAliases = {
-          switch = "darwin-rebuild switch --flake ~/repos/home";
+          switch = "darwin-rebuild switch --flake ${here}";
           history = "history 0";
           nixsh = "nix-shell --run 'exec zsh' -p";
           subl = "'/Applications/Sublime Text.app/Contents/SharedSupport/bin/subl'";
@@ -183,15 +188,26 @@
       };
 
       home.file.".vimrc".text = ''
-      inoremap jk <Esc>
+        inoremap jk <Esc>
       '';
 
       home.file.".emacs.d/early-init.el" = {
-        source = config.lib.file.mkOutOfStoreSymlink "/Users/eriggs/repos/home/.emacs.d/early-init.el";
+        source = config.lib.file.mkOutOfStoreSymlink "${here}/.emacs.d/early-init.el";
       };
       home.file.".emacs.d/init.el" = {
-        source = config.lib.file.mkOutOfStoreSymlink "/Users/eriggs/repos/home/.emacs.d/init.el";
+        source = config.lib.file.mkOutOfStoreSymlink "${here}/.emacs.d/init.el";
       };
+
+      home.file.".config/ghostty/config".text = ''
+        font-size = 12
+        theme = catppuccin-mocha
+        minimum-contrast = 3.0
+
+        window-inherit-working-directory = false
+        window-inherit-font-size = false
+
+        keybind = global:cmd+grave_accent=toggle_quick_terminal
+      '';
 
       programs.git = {
         enable = true;
