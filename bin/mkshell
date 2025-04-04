@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Check if flake.nix already exists
 if [ -f flake.nix ]; then
     echo "Error: flake.nix already exists in current directory"
     exit 1
@@ -10,7 +9,7 @@ fi
 cat >flake.nix <<'EOF'
 {
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     flake-utils.url = "github:numtide/flake-utils";
   };
   outputs = { self, nixpkgs, flake-utils }:
@@ -33,13 +32,12 @@ cat >>flake.nix <<'EOF'
 }
 EOF
 
-# Create or append to .envrc
 if [ ! -f .envrc ]; then
     echo "creating .envrc with 'use flake'"
     echo "use flake" > .envrc
 elif ! grep -q "use flake" .envrc; then
-    echo "appending 'use flake' to .envrc"
-    echo "use flake" >> .envrc
+    echo "prepending 'use flake' to .envrc"
+    sed -i '1s/^/use flake\n/' testfile
 else
     echo "'use flake' already in .envrc"
 fi

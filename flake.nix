@@ -84,6 +84,7 @@
               "eloston-chromium"
               "xquartz"
               "zotero"
+              "docker"
             ];
           };
 
@@ -121,10 +122,14 @@
               devenv
               ffmpeg
               jq
+              kubectl
               nmap
               picocom
               pkg-config
               ripgrep
+              httpie
+
+              runpodctl
 
               # editors
 
@@ -148,6 +153,8 @@
 
               # apps
 
+              dbeaver-bin
+              sqlitebrowser
               # jadx
               mpv
               spotify
