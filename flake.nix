@@ -205,40 +205,22 @@
               inherit (builtins) listToAttrs;
               inherit (pkgs.lib.path) removePrefix;
               inherit (pkgs.lib.filesystem) listFilesRecursive;
-              relFilePaths = map (removePrefix ./.) (listFilesRecursive ./link);
             in
-              listToAttrs 
-                (map 
-                  (p: { name = p; value = { source = config.lib.file.mkOutOfStoreSymlink "${here}/${p}"; }; })
-                  relFilePaths
-                )
+            listToAttrs (
+              map (p:
+                let
+                  relToHome = removePrefix ./link p;
+                  relToHere = removePrefix ./. p;
+                in 
+                {
+                  name = relToHome;
+                  value = {
+                    source = config.lib.file.mkOutOfStoreSymlink "${here}/${relToHere}";
+                  };
+                }
+              ) (listFilesRecursive ./link)
+            )
           );
-
-          /*
-              # ".config/ghostty/config".source =  config.lib.file.mkOutOfStoreSymlink "${here}/config/ghostty";
-          home.file.".vimrc".text = '' '';
-          home.file.".config/ghostty/config".source = config.lib.file.mkOutOfStoreSymlink "${here}/config/ghostty";
-          home.file.".emacs.d/early-init.el" = {
-            source = config.lib.file.mkOutOfStoreSymlink "${here}/.emacs.d/early-init.el";
-          };
-          home.file.".emacs.d/init.el" = {
-            source = config.lib.file.mkOutOfStoreSymlink "${here}/.emacs.d/init.el";
-          };
-          */
-
-          /*
-          home.file.".config/ghostty/config".text = ''
-            font-size = 12
-            theme = catppuccin-mocha
-            minimum-contrast = 3.0
-
-            window-inherit-working-directory = false
-            window-inherit-font-size = false
-
-            keybind = global:cmd+grave_accent=toggle_quick_terminal
-          '';
-          */
-
 
           programs.git = {
             enable = true;
