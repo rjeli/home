@@ -1,0 +1,8 @@
+font-size = 12
+theme = catppuccin-mocha
+minimum-contrast = 3.0
+
+window-inherit-working-directory = false
+window-inherit-font-size = false
+
+keybind = global:cmd+grave_accent=toggle_quick_terminal

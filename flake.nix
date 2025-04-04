@@ -80,6 +80,7 @@
             casks = [
               "ghostty"
               "iterm2"
+              "mpv"
               "alt-tab"
               "eloston-chromium"
               "xquartz"
@@ -156,7 +157,7 @@
               dbeaver-bin
               sqlitebrowser
               # jadx
-              mpv
+              # mpv
               spotify
 
               # blender
@@ -210,6 +211,7 @@
             source = config.lib.file.mkOutOfStoreSymlink "${here}/.emacs.d/init.el";
           };
 
+          /*
           home.file.".config/ghostty/config".text = ''
             font-size = 12
             theme = catppuccin-mocha
@@ -220,6 +222,9 @@
 
             keybind = global:cmd+grave_accent=toggle_quick_terminal
           '';
+          */
+          
+          home.file.".config/ghostty/config".source = config.lib.file.mkOutOfStoreSymlink ./config/ghostty;
 
           programs.git = {
             enable = true;
