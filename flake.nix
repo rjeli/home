@@ -80,7 +80,6 @@
             casks = [
               "ghostty"
               "iterm2"
-              "mpv"
               "alt-tab"
               "eloston-chromium"
               "xquartz"
