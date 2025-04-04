@@ -200,16 +200,31 @@
             initExtra = (builtins.readFile ./.zshrc);
           };
 
-          home.file.".vimrc".text = ''
-            inoremap jk <Esc>
-          '';
+          home.file = (
+            let
+              inherit (builtins) listToAttrs;
+              inherit (pkgs.lib.path) removePrefix;
+              inherit (pkgs.lib.filesystem) listFilesRecursive;
+              relFilePaths = map (removePrefix ./.) (listFilesRecursive ./link);
+            in
+              listToAttrs 
+                (map 
+                  (p: { name = p; value = { source = config.lib.file.mkOutOfStoreSymlink "${here}/${p}"; }; })
+                  relFilePaths
+                )
+          );
 
+          /*
+              # ".config/ghostty/config".source =  config.lib.file.mkOutOfStoreSymlink "${here}/config/ghostty";
+          home.file.".vimrc".text = '' '';
+          home.file.".config/ghostty/config".source = config.lib.file.mkOutOfStoreSymlink "${here}/config/ghostty";
           home.file.".emacs.d/early-init.el" = {
             source = config.lib.file.mkOutOfStoreSymlink "${here}/.emacs.d/early-init.el";
           };
           home.file.".emacs.d/init.el" = {
             source = config.lib.file.mkOutOfStoreSymlink "${here}/.emacs.d/init.el";
           };
+          */
 
           /*
           home.file.".config/ghostty/config".text = ''
@@ -223,8 +238,7 @@
             keybind = global:cmd+grave_accent=toggle_quick_terminal
           '';
           */
-          
-          home.file.".config/ghostty/config".source = config.lib.file.mkOutOfStoreSymlink ./config/ghostty;
+
 
           programs.git = {
             enable = true;
