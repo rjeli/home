@@ -36,9 +36,19 @@
           system.stateVersion = 5;
 
           # need newer nix for flake relative paths
-          nix.package = pkgs.nixVersions.nix_2_26;
-          nix.settings = {
-            experimental-features = "nix-command flakes";
+          nix = {
+            package = pkgs.nixVersions.nix_2_26;
+            /*
+            linux-builder = {
+              enable = true;
+              systems = ["x86_64-linux"];
+            };
+            */
+            settings = {
+              trusted-users = ["@admin" "eriggs"];
+              experimental-features = "nix-command flakes";
+              accept-flake-config = true;
+            };
           };
 
           # todo figure out how to not hardcode?
@@ -128,6 +138,7 @@
               pkg-config
               ripgrep
               httpie
+              cmake
 
               runpodctl
 
@@ -238,6 +249,7 @@
             ];
             extraConfig = {
               push.autoSetupRemote = true;
+              init.defaultBranch = "master";
             };
           };
 

@@ -25,3 +25,5 @@ fi
 
 # reset color & literal %
 PROMPT+=' %f%% '
+
+source "$HOME/.zshrc_extra"
