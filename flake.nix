@@ -15,16 +15,17 @@
 
   outputs =
 
-    inputs@{
+    {
       self,
-      nixpkgs,
       darwin,
       home-manager,
+      ... # nixpkgs
     }:
 
     let
 
       darwinConfig =
+        { user }:
         { pkgs, ... }:
         {
           nixpkgs.hostPlatform = "aarch64-darwin";
@@ -39,13 +40,16 @@
           nix = {
             package = pkgs.nixVersions.nix_2_26;
             /*
-            linux-builder = {
-              enable = true;
-              systems = ["x86_64-linux"];
-            };
+              linux-builder = {
+                enable = true;
+                systems = ["x86_64-linux"];
+              };
             */
             settings = {
-              trusted-users = ["@admin" "eriggs"];
+              trusted-users = [
+                "@admin"
+                user
+              ];
               experimental-features = "nix-command flakes";
               accept-flake-config = true;
             };
@@ -53,14 +57,14 @@
 
           # todo figure out how to not hardcode?
           # https://github.com/nix-community/home-manager/issues/4026
-          users.users.eriggs = {
-            name = "eriggs";
-            home = "/Users/eriggs";
+          users.users.${user} = {
+            name = user;
+            home = "/Users/${user}";
           };
 
           programs.zsh.enable = true;
 
-          environment.systemPackages = with pkgs; [ ];
+          environment.systemPackages = [ ];
 
           system.defaults = {
             dock.autohide = true;
@@ -115,6 +119,7 @@
             EDITOR = "vim";
             PNPM_HOME = "$HOME/.pnpm";
           };
+
           home.sessionPath = [
             "${self}/bin"
             "/opt/homebrew/bin"
@@ -148,6 +153,10 @@
               vscodium
 
               # languages
+
+              nil
+              nixd
+              nixfmt-rfc-style
 
               nodejs
               pnpm
@@ -217,11 +226,12 @@
               inherit (pkgs.lib.filesystem) listFilesRecursive;
             in
             listToAttrs (
-              map (p:
+              map (
+                p:
                 let
                   relToHome = removePrefix ./link p;
                   relToHere = removePrefix ./. p;
-                in 
+                in
                 {
                   name = relToHome;
                   value = {
@@ -260,20 +270,28 @@
           };
         };
 
-    in
-    {
-      darwinConfigurations."Polygon-N002HCY2C5" = darwin.lib.darwinSystem {
-        modules = [
-          darwinConfig
-          home-manager.darwinModules.home-manager
-          {
-            home-manager.useGlobalPkgs = true;
-            home-manager.useUserPackages = true;
-            home-manager.verbose = true;
-            home-manager.users.eriggs = homeConfig;
-          }
-        ];
+      machines = {
+        "Polygon-N002HCY2C5" = "eriggs";
       };
+
+    in
+
+    {
+      darwinConfigurations = builtins.mapAttrs (
+        host: user:
+        darwin.lib.darwinSystem {
+          modules = [
+            (darwinConfig { user = user; })
+            home-manager.darwinModules.home-manager
+            {
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
+              home-manager.verbose = true;
+              home-manager.users.${user} = homeConfig;
+            }
+          ];
+        }
+      ) machines;
     };
 
 }
