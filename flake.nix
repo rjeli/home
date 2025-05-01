@@ -214,6 +214,7 @@
               nixsh = "nix-shell --run 'exec zsh' -p";
               subl = "'/Applications/Sublime Text.app/Contents/SharedSupport/bin/subl'";
               code = "$HOME/Applications/'Visual Studio Code.app'/Contents/Resources/app/bin/code";
+              zed = "$HOME/Applications/Zed.app/Contents/MacOS/cli";
             };
             # added to .zshrc
             initExtra = (builtins.readFile ./.zshrc);

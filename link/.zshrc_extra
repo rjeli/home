@@ -1,3 +1,5 @@
+alias zed="$HOME/Applications/Zed.app/Contents/MacOS/cli"
+
 rsyncgi () {
     [ $# -ne 1 ] && echo "usage: rsyncgi remote:path" && exit 1
     [[ "${1: -1}" == "/" ]] && echo "not recommended to end remote path with slash" && exit 1
