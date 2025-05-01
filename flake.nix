@@ -98,7 +98,7 @@
               "eloston-chromium"
               "xquartz"
               "zotero"
-              "docker"
+              # "docker"
             ];
           };
 
@@ -151,6 +151,7 @@
 
               neovim
               vscodium
+              zed-editor
 
               # languages
 
@@ -273,6 +274,7 @@
 
       machines = {
         "Polygon-N002HCY2C5" = "eriggs";
+        "rj-m4" = "eli";
       };
 
     in
