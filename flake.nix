@@ -2,9 +2,9 @@
   description = "darwin flake";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     darwin = {
-      url = "github:LnL7/nix-darwin";
+      url = "github:nix-darwin/nix-darwin";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     home-manager = {
@@ -28,15 +28,13 @@
         { user }:
         { pkgs, ... }:
         {
-          nixpkgs.hostPlatform = "aarch64-darwin";
-          nixpkgs.config.allowUnfree = true;
-
-          system.configurationRevision = self.rev or self.dirtyRev or null;
-          # backcompat: read `darwin-rebuild changelog` before changing
-          # todo:             ^ broken
-          system.stateVersion = 5;
+          nixpkgs = {
+            hostPlatform = "aarch64-darwin";
+            config.allowUnfree = true;
+          };
 
           # need newer nix for flake relative paths
+          # todo use lix ?
           nix = {
             package = pkgs.nixVersions.nix_2_26;
             /*
@@ -55,8 +53,6 @@
             };
           };
 
-          # todo figure out how to not hardcode?
-          # https://github.com/nix-community/home-manager/issues/4026
           users.users.${user} = {
             name = user;
             home = "/Users/${user}";
@@ -64,25 +60,43 @@
 
           programs.zsh.enable = true;
 
-          environment.systemPackages = [ ];
+          security.pam.services.sudo_local.touchIdAuth = true;
 
-          system.defaults = {
-            dock.autohide = true;
-            trackpad.Clicking = true;
-            finder = {
-              AppleShowAllFiles = true; # show hidden
-              AppleShowAllExtensions = true;
-              ShowPathbar = true;
-              FXPreferredViewStyle = "Nlsv"; # list view
-              FXEnableExtensionChangeWarning = false;
-              _FXShowPosixPathInTitle = true;
-              CreateDesktop = false; # no icons on desktop
+          system = {
+            configurationRevision = self.rev or self.dirtyRev or null;
+            # backcompat: read `darwin-rebuild changelog` before changing
+            # todo:             ^ broken
+            stateVersion = 5;
+
+            # how to modify power settings (minutes until sleep?)
+            defaults = {
+              dock.autohide = true;
+              trackpad.Clicking = true;
+              finder = {
+                AppleShowAllFiles = true; # show hidden
+                AppleShowAllExtensions = true;
+                ShowPathbar = true;
+                FXPreferredViewStyle = "Nlsv"; # list view
+                FXEnableExtensionChangeWarning = false;
+                _FXShowPosixPathInTitle = true;
+                CreateDesktop = false; # no icons on desktop
+              };
+              NSGlobalDomain = {
+                NSAutomaticCapitalizationEnabled = false;
+                NSWindowShouldDragOnGesture = true;
+              };
+              WindowManager = {
+                EnableTiledWindowMargins = false;
+                EnableTilingByEdgeDrag = true;
+                EnableTopTilingByEdgeDrag = true;
+              };
             };
-          };
 
-          system.keyboard = {
-            enableKeyMapping = true;
-            remapCapsLockToControl = true;
+            keyboard = {
+              enableKeyMapping = true;
+              remapCapsLockToControl = true;
+            };
+
           };
 
           homebrew = {
@@ -90,186 +104,37 @@
             global.autoUpdate = false;
             onActivation.cleanup = "uninstall";
             taps = [ ];
-            brews = [ "zenity" ];
+            brews = [ ];
             casks = [
+              "alt-tab"
+              "claude"
+              "eloston-chromium"
               "ghostty"
               "iterm2"
-              "alt-tab"
-              "eloston-chromium"
+              "jan"
               "xquartz"
               "zotero"
-              # "docker"
             ];
           };
 
-          security.pam.services.sudo_local.touchIdAuth = true;
+          environment.systemPackages = [ ];
+
         };
 
       homeConfig =
         { pkgs, config, ... }:
-
         let
           here = "${config.home.homeDirectory}/repos/home";
-
         in
         {
-          home.stateVersion = "24.05";
-
-          home.sessionVariables = {
-            EDITOR = "vim";
-            PNPM_HOME = "$HOME/.pnpm";
-          };
-
-          home.sessionPath = [
-            "${self}/bin"
-            "/opt/homebrew/bin"
-            "$HOME/bin"
-            "$HOME/.cargo/bin"
-            "$HOME/.deno/bin"
-            "$HOME/.pnpm"
-          ];
-
-          home.packages =
-            (with pkgs; [
-
-              # cli tools
-
-              devenv
-              ffmpeg
-              jq
-              kubectl
-              nmap
-              picocom
-              pkg-config
-              ripgrep
-              httpie
-              cmake
-
-              runpodctl
-
-              # editors
-
-              neovim
-              vscodium
-              zed-editor
-
-              # languages
-
-              nil
-              nixd
-              nixfmt-rfc-style
-
-              nodejs
-              pnpm
-
-              uv
-
-              deno
-              dhall
-              dhall-docs
-              dhall-json
-              dhall-lsp-server
-              # octaveFull
-              (sage.override { requireSageTests = false; })
-
-              # apps
-
-              dbeaver-bin
-              sqlitebrowser
-              # jadx
-              # mpv
-              spotify
-
-              # blender
-              # (octaveFull.withPackages (opkgs: with opkgs; [ ltfat ]))
-              # (octave.withPackages (opkgs: with opkgs; [ symbolic splines ]))
-              # octavePackages.ltfat
-              # ((octave.override { enableQt = true; }).withPackages (opkgs: with opkgs; [ ltfat ]))
-
-            ])
-            ++ [
-              /*
-                insecure
-                (let emacs = (pkgs.emacs29-macport.override {
-                  withTreeSitter = true; }); in (pkgs.emacsPackagesFor
-                  emacs).emacsWithPackages (epkgs: with epkgs; [
-                  treesit-grammars.with-all-grammars ]))
-              */
-            ];
-
-          programs.zsh = {
-            enable = true;
-            enableCompletion = true;
-            enableVteIntegration = true;
-            defaultKeymap = "emacs";
-            history = {
-              # save timestamp
-              extended = true;
-              ignoreDups = true;
-              save = 999999999;
-              size = 999999999;
-            };
-            shellAliases = {
-              switch = "darwin-rebuild switch --flake ${here}";
-              history = "history 0";
-              nixsh = "nix-shell --run 'exec zsh' -p";
-              subl = "'/Applications/Sublime Text.app/Contents/SharedSupport/bin/subl'";
-              code = "$HOME/Applications/'Visual Studio Code.app'/Contents/Resources/app/bin/code";
-              zed = "$HOME/Applications/Zed.app/Contents/MacOS/cli";
-            };
-            # added to .zshrc
-            initExtra = (builtins.readFile ./.zshrc);
-          };
-
-          home.file = (
-            let
-              inherit (builtins) listToAttrs;
-              inherit (pkgs.lib.path) removePrefix;
-              inherit (pkgs.lib.filesystem) listFilesRecursive;
-            in
-            listToAttrs (
-              map (
-                p:
-                let
-                  relToHome = removePrefix ./link p;
-                  relToHere = removePrefix ./. p;
-                in
-                {
-                  name = relToHome;
-                  value = {
-                    source = config.lib.file.mkOutOfStoreSymlink "${here}/${relToHere}";
-                  };
-                }
-              ) (listFilesRecursive ./link)
-            )
+          home = (
+            import ./home.nix {
+              here = here;
+              pkgs = pkgs;
+              config = config;
+            }
           );
-
-          programs.git = {
-            enable = true;
-            userName = "rjeli";
-            userEmail = "eli@rje.li";
-            aliases = {
-              s = "status";
-              co = "checkout";
-            };
-            ignores = [
-              ".DS_Store"
-              "*.sublime-workspace"
-              ".sublime/"
-              ".envrc"
-              ".direnv"
-            ];
-            extraConfig = {
-              push.autoSetupRemote = true;
-              init.defaultBranch = "master";
-            };
-          };
-
-          programs.direnv = {
-            enable = true;
-            enableZshIntegration = true;
-            nix-direnv.enable = true;
-          };
+          programs = (import ./programs.nix { here = here; });
         };
 
       machines = {
@@ -287,10 +152,12 @@
             (darwinConfig { user = user; })
             home-manager.darwinModules.home-manager
             {
-              home-manager.useGlobalPkgs = true;
-              home-manager.useUserPackages = true;
-              home-manager.verbose = true;
-              home-manager.users.${user} = homeConfig;
+              home-manager = {
+                useGlobalPkgs = true;
+                useUserPackages = true;
+                verbose = true;
+                users.${user} = homeConfig;
+              };
             }
           ];
         }

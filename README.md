@@ -1,4 +1,6 @@
-format: 
+# home
+
+format:
 
 ```zsh
 % nix-shell -p nixfmt-rfc-style --run 'nixfmt flake.nix'
@@ -27,7 +29,11 @@ gc:
 # todo: --dry-run seems to do nothing
 ```
 
-cold install: (untested)
+## cold install: (untested)
+
+start with xcode from mac app store
+
+then:
 
 - [install lix](https://lix.systems/install/#on-any-other-linuxmacos-system)
 - install brew
@@ -37,6 +43,12 @@ cold install: (untested)
 % curl -sSf -L https://install.lix.systems/lix | sh -s -- install
 % /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 % nix run nix-darwin/master#darwin-rebuild -- switch --flake .
+```
+
+probably also want rustup
+
+```zsh
+% curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 ```
 
 
