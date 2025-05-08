@@ -37,6 +37,7 @@
       httpie
       cmake
       mas
+      imagemagick
 
       runpodctl
 
@@ -62,8 +63,11 @@
       dhall-docs
       dhall-json
       dhall-lsp-server
+
       # octaveFull
       (sage.override { requireSageTests = false; })
+
+      typst
 
       # apps
 
