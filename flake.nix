@@ -51,6 +51,7 @@
           nixpkgs = {
             hostPlatform = "aarch64-darwin";
             config.allowUnfree = true;
+            overlays = import ./overlays.nix { };
           };
 
           users.users.${user} = {

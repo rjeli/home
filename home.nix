@@ -119,7 +119,7 @@
         dhall-lsp-server
 
         # octaveFull
-        (sage.override { requireSageTests = false; })
+        sage
 
         typst
 
