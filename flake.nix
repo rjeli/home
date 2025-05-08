@@ -28,11 +28,6 @@
         { user }:
         { pkgs, ... }:
         {
-          nixpkgs = {
-            hostPlatform = "aarch64-darwin";
-            config.allowUnfree = true;
-          };
-
           # need newer nix for flake relative paths
           # todo use lix ?
           nix = {
@@ -51,6 +46,11 @@
               experimental-features = "nix-command flakes";
               accept-flake-config = true;
             };
+          };
+
+          nixpkgs = {
+            hostPlatform = "aarch64-darwin";
+            config.allowUnfree = true;
           };
 
           users.users.${user} = {
@@ -135,16 +135,7 @@
         let
           here = "${config.home.homeDirectory}/repos/home";
         in
-        {
-          home = (
-            import ./home.nix {
-              here = here;
-              pkgs = pkgs;
-              config = config;
-            }
-          );
-          programs = (import ./programs.nix { here = here; });
-        };
+        import ./home.nix { inherit pkgs config here; };
 
       machines = {
         "Polygon-N002HCY2C5" = "eriggs";
