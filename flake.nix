@@ -113,6 +113,7 @@
               "ghostty"
               "iterm2"
               "jan"
+              "orbstack"
               "xquartz"
               "zotero"
             ];
