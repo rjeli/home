@@ -73,6 +73,7 @@
       "$HOME/.cargo/bin"
       "$HOME/.deno/bin"
       "$HOME/.pnpm"
+      "$HOME/.juliaup/bin"
     ];
 
     packages =
@@ -90,10 +91,12 @@
         ripgrep
         httpie
         cmake
-        mas
         imagemagick
 
+        # PaaS
+
         runpodctl
+        flyctl
 
         # editors
 
@@ -106,22 +109,19 @@
         nil
         nixd
         nixfmt-rfc-style
-
         nodejs
         pnpm
-
         uv
-
         deno
         dhall
         dhall-docs
         dhall-json
         dhall-lsp-server
-
+        # julia
         # octaveFull
         sage
-
         typst
+        zig
 
         # apps
 
@@ -130,6 +130,12 @@
         # jadx
         # mpv
         spotify
+        stats
+        discord
+
+        # latex
+
+        texlive.combined.scheme-full
 
         # blender
         # (octaveFull.withPackages (opkgs: with opkgs; [ ltfat ]))
