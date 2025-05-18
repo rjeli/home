@@ -69,6 +69,8 @@
             # todo:             ^ broken
             stateVersion = 5;
 
+            primaryUser = user;
+
             # how to modify power settings (minutes until sleep?)
             defaults = {
               dock.autohide = true;
