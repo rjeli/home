@@ -37,6 +37,8 @@
       aliases = {
         s = "status";
         co = "checkout";
+        cam = "commit -am";
+        l = "log --graph --decorate --pretty=oneline --abbrev-commit";
       };
       ignores = [
         ".DS_Store"
