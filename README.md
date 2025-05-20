@@ -54,3 +54,11 @@ probably also want rustup
 
 inspo:
 - https://github.com/davish/setup
+
+# todo:
+
+system settings:
+- power mgmt
+- unbind ⌘-Spc from spotlight, bind to alfred
+
+find stats alternative?

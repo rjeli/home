@@ -9,9 +9,10 @@
 //
 {
   "assistant": {
+    "default_profile": "ask",
     "default_model": {
-      "provider": "openai",
-      "model": "o3"
+      "provider": "lmstudio",
+      "model": "qwen3-30b-a3b"
     },
     "version": "2"
   },

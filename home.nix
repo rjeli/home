@@ -19,7 +19,7 @@
         size = 999999999;
       };
       shellAliases = {
-        switch = "darwin-rebuild switch --flake ${here}";
+        switch = "sudo darwin-rebuild switch --flake ${here}";
         history = "history 0";
         nixsh = "nix-shell --run 'exec zsh' -p";
         subl = "'/Applications/Sublime Text.app/Contents/SharedSupport/bin/subl'";
@@ -133,9 +133,16 @@
         stats
         discord
 
+        mpv
+        # transmission_4-gtk
+
         # latex
 
         texlive.combined.scheme-full
+
+        # guh
+
+        ollama
 
         # blender
         # (octaveFull.withPackages (opkgs: with opkgs; [ ltfat ]))
