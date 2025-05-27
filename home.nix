@@ -19,7 +19,7 @@
         size = 999999999;
       };
       shellAliases = {
-        switch = "sudo darwin-rebuild switch --flake ${here}";
+        switch = "sudo darwin-rebuild switch --flake ${here} && rehash";
         history = "history 0";
         nixsh = "nix-shell --run 'exec zsh' -p";
         subl = "'/Applications/Sublime Text.app/Contents/SharedSupport/bin/subl'";
@@ -94,6 +94,7 @@
         httpie
         cmake
         imagemagick
+        nushell
 
         # PaaS
 

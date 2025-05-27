@@ -8,22 +8,6 @@
 // command palette (cmd-shift-p / ctrl-shift-p)
 //
 {
-  "assistant": {
-    "profiles": {
-      "foo": {
-        "name": "foo",
-        "tools": {},
-        "enable_all_context_servers": false,
-        "context_servers": {}
-      }
-    },
-    "default_profile": "write",
-    "default_model": {
-      "provider": "google",
-      "model": "gemini-2.5-pro-preview-03-25"
-    },
-    "version": "2"
-  },
   "ui_font_size": 14,
 
   "buffer_font_size": 12,
@@ -43,18 +27,6 @@
   "soft_wrap": "editor_width",
 
   "extend_comment_on_newline": false,
-
-  "features": {
-    "edit_prediction_provider": "zed"
-  },
-  "edit_predictions": {
-    "mode": "subtle",
-    "copilot": {
-      "proxy": null,
-      "proxy_no_verify": null
-    },
-    "enabled_in_assistant": false
-  },
 
   "theme": {
     "mode": "system",
@@ -95,6 +67,35 @@
     "rust-analyzer": {
       "enable_lsp_tasks": true
     }
+  },
+
+  "features": {
+    "edit_prediction_provider": "zed"
+  },
+  "edit_predictions": {
+    "mode": "subtle",
+    "copilot": {
+      "proxy": null,
+      "proxy_no_verify": null
+    },
+    "enabled_in_text_threads": false
+  },
+
+  "agent": {
+    "profiles": {
+      "foo": {
+        "name": "foo",
+        "tools": {},
+        "enable_all_context_servers": false,
+        "context_servers": {}
+      }
+    },
+    "default_profile": "write",
+    "default_model": {
+      "provider": "zed.dev",
+      "model": "claude-3-7-sonnet-thinking-latest"
+    },
+    "version": "2"
   },
 
   "telemetry": {
