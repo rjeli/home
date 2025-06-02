@@ -103,6 +103,7 @@
                 useGlobalPkgs = true;
                 useUserPackages = true;
                 verbose = true;
+                backupFileExtension = "bak";
                 users.${user} = homeConfig;
               };
             }

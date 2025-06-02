@@ -6,3 +6,4 @@ window-inherit-working-directory = false
 window-inherit-font-size = false
 
 keybind = global:cmd+grave_accent=toggle_quick_terminal
+keybind = shift+enter=text:\n

@@ -72,10 +72,13 @@
       "${here}/bin"
       "/opt/homebrew/bin"
       "$HOME/bin"
+      "$HOME/.local/bin"
       "$HOME/.cargo/bin"
       "$HOME/.deno/bin"
       "$HOME/.pnpm"
       "$HOME/.juliaup/bin"
+      "$HOME/.ghcup/bin"
+      "$HOME/.cabal/bin"
     ];
 
     packages =
@@ -95,6 +98,8 @@
         cmake
         imagemagick
         nushell
+
+        gh
 
         # PaaS
 
@@ -138,6 +143,7 @@
 
         mpv
         # transmission_4-gtk
+        blender
 
         # latex
 
@@ -169,22 +175,34 @@
         inherit (builtins) listToAttrs;
         inherit (pkgs.lib.path) removePrefix;
         inherit (pkgs.lib.filesystem) listFilesRecursive;
-      in
-      listToAttrs (
-        map (
-          p:
+        inherit (config.lib.file) mkOutOfStoreSymlink;
+
+        pathToAttr = (
+          absPath:
           let
-            relToHome = removePrefix ./link p;
-            relToHere = removePrefix ./. p;
+            relToHome = removePrefix ./link absPath;
+            relToHere = removePrefix ./. absPath;
           in
           {
             name = relToHome;
             value = {
-              source = config.lib.file.mkOutOfStoreSymlink "${here}/${relToHere}";
+              source = mkOutOfStoreSymlink "${here}/${relToHere}";
             };
           }
-        ) (listFilesRecursive ./link)
-      )
+        );
+
+        linkedFiles = (map pathToAttr (listFilesRecursive ./link));
+
+      in
+
+      (listToAttrs linkedFiles)
+      /*
+        // {
+          "Library/Containers/com.userscripts.macos.Userscripts-Extension/Data/Documents/scripts" = {
+            source = mkOutOfStoreSymlink "${here}/user.js";
+          };
+        }
+      */
     );
   };
 
