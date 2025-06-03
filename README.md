@@ -15,6 +15,7 @@ bump nix packages:
 bump homebrew:
 
 (todo: figure out how to lock brew packages into git)
+(seems impossible. brew pure rolling release lol)
 
 ```zsh
 % brew update
@@ -27,6 +28,11 @@ gc:
 ```zsh
 % nix store gc
 # todo: --dry-run seems to do nothing
+```
+
+tree:
+```zsh
+% nix-tree --derivation '.#darwinConfigurations.rj-m4.system'
 ```
 
 ## cold install: (untested)

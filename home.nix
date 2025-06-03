@@ -1,6 +1,7 @@
 {
   here,
   pkgs,
+  # pkgs-stable,
   config,
 }:
 {
@@ -99,6 +100,7 @@
         cmake
         imagemagick
         nushell
+        nix-tree
 
         gh
 
@@ -148,7 +150,7 @@
 
         # latex
 
-        texlive.combined.scheme-full
+        # texlive.combined.scheme-full
 
         # guh
 

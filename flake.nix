@@ -4,28 +4,32 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     darwin = {
-      url = "github:nix-darwin/nix-darwin";
+      url = "github:nix-darwin/nix-darwin/master";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nixpkgs-stable.url = "github:nixos/nixpkgs/nixpkgs-25.05-darwin";
   };
 
   outputs =
 
     {
       self,
+      nixpkgs,
       darwin,
       home-manager,
-      nixpkgs,
+      nixpkgs-stable,
     }:
 
     let
 
       inherit (builtins) mapAttrs;
       inherit (nixpkgs.lib.trivial) flip;
+
+      pkgs-stable = import nixpkgs-stable { system = "aarch64-darwin"; };
 
       darwinConfig =
         { user }:
@@ -76,7 +80,9 @@
 
           homebrew = import ./brew.nix { };
 
-          environment.systemPackages = [ ];
+          environment.systemPackages = [
+            pkgs-stable.texlive.combined.scheme-full
+          ];
 
         };
 
