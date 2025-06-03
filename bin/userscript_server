@@ -1,0 +1,223 @@
+#!/usr/bin/env -S deno run -A
+import { assertEquals, unimplemented as todo } from "jsr:@std/assert";
+import * as path from "jsr:@std/path";
+import * as fs from "jsr:@std/fs";
+
+if (import.meta.main) {
+  console.log("starting server...");
+
+  Deno.serve({ port: 8080 }, async (req: Request) => {
+    console.log(req);
+    const url = new URL(req.url);
+
+    if (url.pathname === "/open-repo") {
+      assertEquals(req.method, "POST");
+
+      const json = await req.json();
+      const info = parsePageUrl(new URL(json.href));
+
+      const stream = new ReadableStream({
+        async start(controller) {
+          const encoder = new TextEncoder();
+          
+          const sendStatus = (text: string) => {
+            controller.enqueue(encoder.encode(`{"text":"${text}"}\n`));
+          };
+
+          try {
+            const checkoutPath = path.join(
+              Deno.env.get("HOME")!,
+              "git",
+              info.checkoutPath,
+            );
+
+            if (!(await fs.exists(checkoutPath))) {
+              sendStatus("Cloning repository...");
+              console.log("clone");
+              await runGit(
+                "clone",
+                ...(info.branch ? ["--branch", info.branch] : []),
+                "--recurse-submodules",
+                info.cloneUrl,
+                checkoutPath,
+              );
+            } else {
+              if (info.branch) {
+                sendStatus("Switching to branch...");
+                console.log("checkout");
+                await runGit(
+                  "-C",
+                  checkoutPath,
+                  "checkout",
+                  info.branch,
+                );
+              }
+              sendStatus("Updating repository...");
+              console.log("pull");
+              await runGit(
+                "-C",
+                checkoutPath,
+                "pull",
+              );
+            }
+
+            sendStatus("Opening in Zed...");
+            const zedArgs = [
+              checkoutPath,
+              ...(info.openPath ? [path.join(checkoutPath, info.openPath)] : []),
+            ];
+            console.log({ zedArgs });
+
+            const zeditor = await new Deno.Command("zeditor", {
+              args: zedArgs,
+            }).output();
+            console.log({ zeditor });
+
+            sendStatus("Success");
+          } catch (error) {
+            console.error("Error:", error);
+            sendStatus("Error");
+          } finally {
+            controller.close();
+          }
+        },
+      });
+
+      return new Response(stream, {
+        headers: {
+          "Content-Type": "text/plain",
+          "Access-Control-Allow-Origin": "*",
+        },
+      });
+    }
+
+    return new Response("Hello, World!");
+  });
+}
+
+async function runGit(...args: string[]): Promise<Deno.CommandStatus> {
+  console.log({ args });
+
+  const cmd = new Deno.Command("git", {
+    args,
+    stdin: "null",
+    stdout: "piped",
+    stderr: "piped",
+  });
+  const child = cmd.spawn();
+
+  printReader("stdout", child.stdout);
+  printReader("stderr", child.stderr);
+
+  const status = await child.status;
+  console.log({ status });
+
+  if (!status.success) {
+    throw new Error(`Git command failed with status ${status.code}`);
+  }
+
+  return status;
+}
+
+async function printReader(pfx: string, stream: ReadableStream<Uint8Array>) {
+  for await (const chunk of stream) {
+    const text = new TextDecoder().decode(chunk);
+    for (let i = 0; i < text.length; i += 60) {
+      console.log(`${pfx} | ${text.slice(i, i + 60)}`);
+    }
+  }
+}
+
+interface OpenRepoInfo {
+  cloneUrl: string;
+  // relative to $HOME
+  checkoutPath: string;
+  branch?: string;
+  // relative to repo
+  openPath?: string;
+}
+
+function parsePageUrl(url: URL): OpenRepoInfo {
+  if (url.hostname === "github.com") {
+    const [owner, repo, ...parts] = url.pathname.split("/").slice(1);
+    const info: OpenRepoInfo = {
+      cloneUrl: `git@github.com:${owner}/${repo}.git`,
+      checkoutPath: `github.com/${owner}/${repo}`,
+    };
+    if (parts.length > 0 && (parts[0] === "tree" || parts[0] === "blob")) {
+      info.branch = parts[1];
+      if (parts.length > 2) {
+        info.openPath = parts.slice(2).join("/");
+        const line = url.hash.match(/L(\d+)/);
+        if (line) {
+          info.openPath += `:${line[1]}`;
+        }
+      }
+    }
+    return info;
+  }
+  return todo();
+}
+
+Deno.test("parsePageUrl", () => {
+  const cloneUrl = "git@github.com:tc39/proposal-composites.git";
+  const checkoutPath = "github.com/tc39/proposal-composites";
+
+  const cases: [string, OpenRepoInfo][] = [
+    [
+      "https://github.com/tc39/proposal-composites",
+      {
+        cloneUrl,
+        checkoutPath,
+      },
+    ],
+    [
+      "https://github.com/tc39/proposal-composites/blob/main/polyfill/internal/hash.ts#L24",
+      {
+        cloneUrl,
+        checkoutPath,
+        branch: "main",
+        openPath: "polyfill/internal/hash.ts:24",
+      },
+    ],
+    [
+      "https://github.com/tc39/proposal-composites/tree/main",
+      {
+        cloneUrl,
+        checkoutPath,
+        branch: "main",
+      },
+    ],
+    [
+      "https://github.com/tc39/proposal-composites/tree/main/polyfill",
+      {
+        cloneUrl,
+        checkoutPath,
+        branch: "main",
+        openPath: "polyfill",
+      },
+    ],
+    [
+      "https://github.com/tc39/proposal-composites/tree/gh-pages",
+      {
+        cloneUrl,
+        checkoutPath,
+        branch: "gh-pages",
+      },
+    ],
+    [
+      "https://github.com/tc39/proposal-composites/blob/gh-pages/index.html",
+      {
+        cloneUrl,
+        checkoutPath,
+        branch: "gh-pages",
+        openPath: "index.html",
+      },
+    ],
+  ];
+
+  for (const [url, info] of cases) {
+    const parsed = parsePageUrl(new URL(url));
+    assertEquals(parsed, info);
+  }
+});

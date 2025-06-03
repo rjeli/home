@@ -110,7 +110,7 @@
 
         neovim
         vscodium
-        zed-editor
+        # zed-editor
 
         # languages
 

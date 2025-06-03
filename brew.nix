@@ -20,6 +20,8 @@
     "spotify"
     "transmission"
     "xquartz"
+    # in nix as zed-editor, but there are soo many updates
+    "zed"
     "zotero"
   ];
   # `mas list | awk '{print $2, "=", $1, ";"}'`

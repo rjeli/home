@@ -46,6 +46,9 @@
   "restore_on_startup": "none",
 
   "languages": {
+    "Markdown": {
+      "show_edit_predictions": false
+    },
     "Nix": {
       "language_servers": ["nil", "!nixd"],
       "formatter": {
