@@ -76,6 +76,7 @@
     "edit_prediction_provider": "zed"
   },
   "edit_predictions": {
+    "disabled_globs": [],
     "mode": "subtle",
     "copilot": {
       "proxy": null,

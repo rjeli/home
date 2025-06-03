@@ -19,7 +19,7 @@ if (import.meta.main) {
       const stream = new ReadableStream({
         async start(controller) {
           const encoder = new TextEncoder();
-          
+
           const sendStatus = (text: string) => {
             controller.enqueue(encoder.encode(`{"text":"${text}"}\n`));
           };
@@ -64,13 +64,18 @@ if (import.meta.main) {
             sendStatus("Opening in Zed...");
             const zedArgs = [
               checkoutPath,
-              ...(info.openPath ? [path.join(checkoutPath, info.openPath)] : []),
+              ...(info.openPath
+                ? [path.join(checkoutPath, info.openPath)]
+                : []),
             ];
             console.log({ zedArgs });
 
-            const zeditor = await new Deno.Command("zeditor", {
-              args: zedArgs,
-            }).output();
+            const zeditor = await new Deno.Command(
+              "/Applications/Zed.app/Contents/MacOS/cli",
+              {
+                args: zedArgs,
+              },
+            ).output();
             console.log({ zeditor });
 
             sendStatus("Success");
