@@ -19,10 +19,13 @@
       self,
       darwin,
       home-manager,
-      ... # nixpkgs
+      nixpkgs,
     }:
 
     let
+
+      inherit (builtins) mapAttrs;
+      inherit (nixpkgs.lib.trivial) flip;
 
       darwinConfig =
         { user }:
@@ -92,7 +95,7 @@
     in
 
     {
-      darwinConfigurations = builtins.mapAttrs (
+      darwinConfigurations = (flip mapAttrs) machines (
         host: user:
         darwin.lib.darwinSystem {
           modules = [
@@ -109,7 +112,7 @@
             }
           ];
         }
-      ) machines;
+      );
     };
 
 }
