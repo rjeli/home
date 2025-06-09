@@ -27,6 +27,7 @@
         code = "$HOME/Applications/'Visual Studio Code.app'/Contents/Resources/app/bin/code";
         # zed = "zeditor";
         zed = "/Applications/Zed.app/Contents/MacOS/cli";
+        nix-tree-home = "nix-tree --derivation \"path:${here}#darwinConfigurations.$(hostname -s).system\"";
       };
       # added to .zshrc
       initContent = "source ${here}/.zshrc";
@@ -81,42 +82,46 @@
       "$HOME/.juliaup/bin"
       "$HOME/.ghcup/bin"
       "$HOME/.cabal/bin"
+      "$HOME/.elan/bin"
     ];
 
     packages =
       (with pkgs; [
 
-        # cli tools
-
+        # tools for the cli itself
         devenv
-        ffmpeg
+        nushell
+        nix-tree
+        ripgrep
         jq
+
+        # cli tools
         kubectl
         nmap
         picocom
-        pkg-config
-        ripgrep
         httpie
-        cmake
+        ffmpeg
         imagemagick
-        nushell
-        nix-tree
 
+        # build tools
+        pkg-config
+        cmake
+        ninja
+        ccache
+
+        # cli api wrappers
         gh
 
         # PaaS
-
         runpodctl
         flyctl
 
         # editors
-
         neovim
         vscodium
         # zed-editor
 
         # languages
-
         nil
         nixd
         nixfmt-rfc-style
@@ -128,14 +133,14 @@
         dhall-docs
         dhall-json
         dhall-lsp-server
+        idris2
         # julia
         # octaveFull
         sage
         typst
         zig
 
-        # apps
-
+        # gui apps
         dbeaver-bin
         sqlitebrowser
         # jadx
@@ -143,7 +148,6 @@
         spotify
         stats
         discord
-
         mpv
         # transmission_4-gtk
         blender
