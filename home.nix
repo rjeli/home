@@ -28,6 +28,7 @@
         # zed = "zeditor";
         zed = "/Applications/Zed.app/Contents/MacOS/cli";
         nix-tree-home = "nix-tree --derivation \"path:${here}#darwinConfigurations.$(hostname -s).system\"";
+        rot13 = "tr 'A-Za-z' 'N-ZA-Mn-za-m'";
       };
       # added to .zshrc
       initContent = "source ${here}/.zshrc";
@@ -102,12 +103,14 @@
         httpie
         ffmpeg
         imagemagick
+        socat
 
         # build tools
         pkg-config
         cmake
         ninja
         ccache
+        cocoapods
 
         # cli api wrappers
         gh
@@ -145,10 +148,10 @@
         sqlitebrowser
         # jadx
         # mpv
-        spotify
+        # spotify
         stats
-        discord
-        mpv
+        # discord
+        # mpv
         # transmission_4-gtk
         blender
 

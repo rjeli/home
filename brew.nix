@@ -11,12 +11,14 @@
     "alt-tab"
     "alfred"
     "claude"
+    "discord"
     "eloston-chromium"
     "ghostty"
     "iterm2"
     "jan"
     "obsidian"
     "orbstack"
+    "mpv"
     "spotify"
     "transmission"
     "xquartz"
@@ -28,8 +30,14 @@
   masApps = {
     Amphetamine = 937984704;
     DaisyDisk = 411643860;
+    GarageBand = 682658836;
     Hyperduck = 6444667067;
+    iMovie = 408981434;
+    Keynote = 409183694;
+    Numbers = 409203825;
     Obsidian = 6720708363;
+    Pages = 409201541;
+    SingleFile = 6444322545;
     SponsorBlock = 1573461917;
     Tailscale = 1475387142;
     Userscripts = 1463298887;

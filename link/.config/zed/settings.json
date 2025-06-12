@@ -97,8 +97,8 @@
     },
     "default_profile": "write",
     "default_model": {
-      "provider": "zed.dev",
-      "model": "claude-opus-4-thinking"
+      "provider": "google",
+      "model": "gemini-2.5-flash-preview-04-17"
     },
     "version": "2"
   },
