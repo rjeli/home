@@ -103,6 +103,7 @@
         httpie
         ffmpeg
         imagemagick
+        jujutsu
         socat
 
         # build tools
