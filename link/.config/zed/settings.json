@@ -25,15 +25,27 @@
 
   "preferred_line_length": 100,
   "soft_wrap": "editor_width",
-
   "extend_comment_on_newline": false,
 
   "theme": {
     "mode": "system",
     "light": "Solarized Light",
-    "dark": "One Dark"
+    "dark": "Solarized Dark"
+    // "light": "Glazier | Moss Fett",
+    // "dark": "Glazier | Moss Fett"
   },
   "experimental.theme_overrides": {
+    // fixes no drop shadow for "transparent"
+    "background.appearance": "opaque",
+
+    // "background.appearance": "transparent",
+    // "background": "#00000000",
+
+    // "background.appearance": "blurred",
+    // "title_bar.background": "#eee8d555",
+    // "background": "#fdf6e355",
+    // "panel.background": "#00000000",
+
     "warning": "#b58900"
   },
 
@@ -64,6 +76,17 @@
     },
     "C": {
       "format_on_save": "on"
+    },
+    "Python": {
+      "language_servers": ["pyright", "ruff"],
+      "format_on_save": "on",
+      "formatter": [
+        {
+          "language_server": {
+            "name": "ruff"
+          }
+        }
+      ]
     }
   },
   "lsp": {
@@ -97,8 +120,8 @@
     },
     "default_profile": "write",
     "default_model": {
-      "provider": "google",
-      "model": "gemini-2.5-flash-preview-04-17"
+      "provider": "anthropic",
+      "model": "claude-sonnet-4-thinking-latest"
     },
     "version": "2"
   },

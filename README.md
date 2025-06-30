@@ -57,6 +57,15 @@ probably also want rustup
 % curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 ```
 
+setup xquartz
+
+```zsh
+~ % xquartz-install
+Warning: Expecting a LaunchDaemons path since the command was ran as root. Got LaunchAgents instead.
+`launchctl bootstrap` is a recommended alternative.
+```
+
+todo: hmm ^
 
 inspo:
 - https://github.com/davish/setup

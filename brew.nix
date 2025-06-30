@@ -18,12 +18,12 @@
     "jan"
     "obsidian"
     "orbstack"
+    "postgres-unofficial" # postgres.app
     "mpv"
     "spotify"
     "transmission"
-    "xquartz"
-    # in nix as zed-editor, but there are soo many updates
-    "zed"
+    # "xquartz"
+    "zed" # in nix as zed-editor, but there are soo many updates
     "zotero"
   ];
   # `mas list | awk '{print $2, "=", $1, ";"}'`

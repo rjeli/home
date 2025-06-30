@@ -41,6 +41,7 @@
       aliases = {
         s = "status";
         co = "checkout";
+        aa = "add -A";
         cam = "commit -am";
         l = "log --graph --decorate --pretty=oneline --abbrev-commit";
       };
@@ -84,6 +85,7 @@
       "$HOME/.ghcup/bin"
       "$HOME/.cabal/bin"
       "$HOME/.elan/bin"
+      "/Applications/Postgres.app/Contents/Versions/latest/bin"
     ];
 
     packages =
@@ -105,6 +107,8 @@
         imagemagick
         jujutsu
         socat
+        yt-dlp
+        zim-tools
 
         # build tools
         pkg-config
@@ -112,6 +116,7 @@
         ninja
         ccache
         cocoapods
+        just
 
         # cli api wrappers
         gh
@@ -140,6 +145,10 @@
         idris2
         # julia
         # octaveFull
+
+        jdk
+        # jdt-language-server
+
         sage
         typst
         zig
@@ -155,6 +164,7 @@
         # mpv
         # transmission_4-gtk
         blender
+        xquartz
 
         # latex
 

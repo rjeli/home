@@ -12,10 +12,19 @@ cat >flake.nix <<'EOF'
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     flake-utils.url = "github:numtide/flake-utils";
   };
-  outputs = { self, nixpkgs, flake-utils }:
-    flake-utils.lib.eachDefaultSystem (system:
-      let pkgs = import nixpkgs { inherit system; };
-      in with pkgs; {
+  outputs =
+    {
+      self,
+      nixpkgs,
+      flake-utils,
+    }:
+    flake-utils.lib.eachDefaultSystem (
+      system:
+      let
+        pkgs = nixpkgs.legacyPackages.${system};
+      in
+      with pkgs;
+      {
         devShells.default = mkShell {
           packages = [
 EOF
@@ -25,10 +34,10 @@ for pkg in "$@"; do
 done
 
 cat >>flake.nix <<'EOF'
-          ];
-        };
-      }
-    );
+         ];
+       };
+     }
+   );
 }
 EOF
 
