@@ -77,3 +77,5 @@ system settings:
 - unbind ⌘-Spc from spotlight, bind to alfred
 
 find stats alternative?
+
+unfuck mpv

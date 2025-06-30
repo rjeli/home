@@ -60,7 +60,7 @@
           nixpkgs = {
             hostPlatform = "aarch64-darwin";
             config.allowUnfree = true;
-            overlays = import ./overlays.nix { };
+            overlays = import ./overlays.nix { inherit pkgs-stable; };
           };
 
           users.users.${user} = {

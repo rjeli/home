@@ -149,7 +149,7 @@
         jdk
         # jdt-language-server
 
-        sage
+        # sage
         typst
         zig
 
