@@ -79,3 +79,5 @@ system settings:
 find stats alternative?
 
 unfuck mpv
+
+update bump.sh - should put diff in git commit message.
