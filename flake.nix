@@ -29,7 +29,9 @@
       inherit (builtins) mapAttrs;
       inherit (nixpkgs.lib.trivial) flip;
 
-      pkgs-stable = import nixpkgs-stable { system = "aarch64-darwin"; };
+      # pkgs-stable = import nixpkgs-stable { system = "aarch64-darwin"; };
+      # todo dont hardcode system?
+      pkgs-stable = nixpkgs-stable.legacyPackages.aarch64-darwin;
 
       darwinConfig =
         { user }:
@@ -81,7 +83,9 @@
           homebrew = import ./brew.nix { };
 
           environment.systemPackages = [
-            pkgs-stable.texlive.combined.scheme-full
+            # pull this from stable so it doesnt take ages to build
+            # todo its broken on 25.05. https://github.com/nixos/nixpkgs/issues/421014
+            # pkgs-stable.texlive.combined.scheme-full
           ];
 
         };
