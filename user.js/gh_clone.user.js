@@ -14,7 +14,7 @@ function openInZed(button) {
 
   GM.xmlHttpRequest({
     method: "POST",
-    url: "http://localhost:8080/open-repo",
+    url: "http://localhost:10888/open-repo",
     headers: {
       "Content-Type": "application/json",
     },

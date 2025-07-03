@@ -6,97 +6,104 @@ import * as fs from "jsr:@std/fs";
 if (import.meta.main) {
   console.log("starting server...");
 
-  Deno.serve({ port: 8080 }, async (req: Request) => {
-    console.log(req);
-    const url = new URL(req.url);
+  // Deno.serve({ port: 10888 }, async (req: Request) => {
+  Deno.serve({
+    port: 10888,
+    onListen({ port, hostname }) {
+      console.log(`Listening on http://${hostname}:${port}`);
+    },
+    async handler(req: Request) {
+      console.log(req);
+      const url = new URL(req.url);
 
-    if (url.pathname === "/open-repo") {
-      assertEquals(req.method, "POST");
+      if (url.pathname === "/open-repo") {
+        assertEquals(req.method, "POST");
 
-      const json = await req.json();
-      const info = parsePageUrl(new URL(json.href));
+        const json = await req.json();
+        const info = parsePageUrl(new URL(json.href));
 
-      const stream = new ReadableStream({
-        async start(controller) {
-          const encoder = new TextEncoder();
+        const stream = new ReadableStream({
+          async start(controller) {
+            const encoder = new TextEncoder();
 
-          const sendStatus = (text: string) => {
-            controller.enqueue(encoder.encode(`{"text":"${text}"}\n`));
-          };
+            const sendStatus = (text: string) => {
+              controller.enqueue(encoder.encode(`{"text":"${text}"}\n`));
+            };
 
-          try {
-            const checkoutPath = path.join(
-              Deno.env.get("HOME")!,
-              "git",
-              info.checkoutPath,
-            );
-
-            if (!(await fs.exists(checkoutPath))) {
-              sendStatus("Cloning repository...");
-              console.log("clone");
-              await runGit(
-                "clone",
-                ...(info.branch ? ["--branch", info.branch] : []),
-                "--recurse-submodules",
-                info.cloneUrl,
-                checkoutPath,
+            try {
+              const checkoutPath = path.join(
+                Deno.env.get("HOME")!,
+                "git",
+                info.checkoutPath,
               );
-            } else {
-              if (info.branch) {
-                sendStatus("Switching to branch...");
-                console.log("checkout");
+
+              if (!(await fs.exists(checkoutPath))) {
+                sendStatus("Cloning repository...");
+                console.log("clone");
+                await runGit(
+                  "clone",
+                  ...(info.branch ? ["--branch", info.branch] : []),
+                  "--recurse-submodules",
+                  info.cloneUrl,
+                  checkoutPath,
+                );
+              } else {
+                if (info.branch) {
+                  sendStatus("Switching to branch...");
+                  console.log("checkout");
+                  await runGit(
+                    "-C",
+                    checkoutPath,
+                    "checkout",
+                    info.branch,
+                  );
+                }
+                sendStatus("Updating repository...");
+                console.log("pull");
                 await runGit(
                   "-C",
                   checkoutPath,
-                  "checkout",
-                  info.branch,
+                  "pull",
                 );
               }
-              sendStatus("Updating repository...");
-              console.log("pull");
-              await runGit(
-                "-C",
+
+              sendStatus("Opening in Zed...");
+              const zedArgs = [
                 checkoutPath,
-                "pull",
-              );
+                ...(info.openPath
+                  ? [path.join(checkoutPath, info.openPath)]
+                  : []),
+              ];
+              console.log({ zedArgs });
+
+              const zeditor = await new Deno.Command(
+                "/Applications/Zed.app/Contents/MacOS/cli",
+                {
+                  args: zedArgs,
+                },
+              ).output();
+              console.log({ zeditor });
+
+              sendStatus("Success");
+            } catch (error) {
+              console.error("Error:", error);
+              sendStatus("Error");
+            } finally {
+              controller.close();
             }
+          },
+        });
 
-            sendStatus("Opening in Zed...");
-            const zedArgs = [
-              checkoutPath,
-              ...(info.openPath
-                ? [path.join(checkoutPath, info.openPath)]
-                : []),
-            ];
-            console.log({ zedArgs });
+        return new Response(stream, {
+          headers: {
+            "Content-Type": "text/plain",
+            "Access-Control-Allow-Origin": "*",
+          },
+        });
+      }
 
-            const zeditor = await new Deno.Command(
-              "/Applications/Zed.app/Contents/MacOS/cli",
-              {
-                args: zedArgs,
-              },
-            ).output();
-            console.log({ zeditor });
-
-            sendStatus("Success");
-          } catch (error) {
-            console.error("Error:", error);
-            sendStatus("Error");
-          } finally {
-            controller.close();
-          }
-        },
-      });
-
-      return new Response(stream, {
-        headers: {
-          "Content-Type": "text/plain",
-          "Access-Control-Allow-Origin": "*",
-        },
-      });
-    }
-
-    return new Response("Hello, World!");
+      return new Response("Hello, World!");
+    },
   });
 }
 
