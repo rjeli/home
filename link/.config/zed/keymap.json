@@ -24,5 +24,11 @@
       "s": "vim::PushSneak",
       "shift-s": "vim::PushSneakBackward"
     }
+  },
+  {
+    "context": "Workspace",
+    "bindings": {
+      "cmd-g": ["task::Rerun", {}]
+    }
   }
 ]

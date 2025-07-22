@@ -97,6 +97,10 @@
         nix-tree
         ripgrep
         jq
+        pv
+
+        jujutsu
+        jjui
 
         # cli tools
         kubectl
@@ -109,6 +113,7 @@
         socat
         yt-dlp
         zim-tools
+        samply
 
         # build tools
         pkg-config
@@ -117,6 +122,8 @@
         ccache
         cocoapods
         just
+        sccache
+        gn
 
         # cli api wrappers
         gh
@@ -137,7 +144,8 @@
         nodejs
         pnpm
         uv
-        deno
+        python3
+        # deno
         dhall
         dhall-docs
         dhall-json

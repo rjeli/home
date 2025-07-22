@@ -10,9 +10,10 @@
 {
   "ui_font_size": 14,
 
-  "buffer_font_size": 12,
+  // "buffer_font_size": null,
   "buffer_font_family": "Menlo",
-  "buffer_letter_spacing": -0.02,
+  "buffer_font_size": 12,
+  // "buffer_letter_spacing": -0.02,
   "buffer_line_height": "standard",
 
   "scroll_sensitivity": 1.1,
@@ -36,7 +37,7 @@
   },
   "experimental.theme_overrides": {
     // fixes no drop shadow for "transparent"
-    "background.appearance": "opaque",
+    // "background.appearance": "opaque",
 
     // "background.appearance": "transparent",
     // "background": "#00000000",
@@ -120,10 +121,9 @@
     },
     "default_profile": "write",
     "default_model": {
-      "provider": "anthropic",
-      "model": "claude-sonnet-4-thinking-latest"
-    },
-    "version": "2"
+      "provider": "openai",
+      "model": "o4-mini"
+    }
   },
 
   "telemetry": {
