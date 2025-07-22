@@ -40,7 +40,7 @@
           # need newer nix for flake relative paths
           # todo use lix ?
           nix = {
-            package = pkgs.nixVersions.nix_2_26;
+            # package = pkgs.nixVersions.nix_2_26;
             /*
               linux-builder = {
                 enable = true;
