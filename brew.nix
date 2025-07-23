@@ -19,7 +19,7 @@
     "obsidian"
     "orbstack"
     "postgres-unofficial" # postgres.app
-    "mpv"
+    # "mpv"
     "spotify"
     "transmission"
     # "xquartz"
