@@ -26,15 +26,21 @@ function prompt_git() {
 }
 
 function prompt_jj() {
-    echo -n ' '
     jj log -r 'latest(ancestors(@, 10) ~ (empty()~merges()))' \
-        --quiet --no-pager --no-graph --ignore-working-copy --color always \
-        -T "surround('(', ')', separate(' ', \
-            self.local_bookmarks(), \
-            self.change_id().shortest(5)\
-        ))" 2>/dev/null
-
-        #   coalesce(self.description().first_line(), '...'), \
+        --quiet --no-pager --no-graph --ignore-working-copy --color never -T '
+            surround(" %F{blue}[", "]",
+                separate(" ",
+                    self.local_bookmarks(),
+                    concat(
+                        "%F{13}%B",
+                        self.change_id().shortest(5).prefix(),
+                        "%b%F{8}",
+                        self.change_id().shortest(5).rest(),
+                        "%F{blue}"
+                    ),
+                )
+            )
+        '
 }
 
 function prompt_jj_2() {

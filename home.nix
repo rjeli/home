@@ -34,6 +34,13 @@
       initContent = "source ${here}/.zshrc";
     };
 
+    fish = {
+      enable = true;
+      plugins = with pkgs.fishPlugins; [
+        # tide
+      ];
+    };
+
     git = {
       enable = true;
       userName = "rjeli";
@@ -98,6 +105,7 @@
         ripgrep
         jq
         pv
+        fish
 
         jujutsu
         jjui

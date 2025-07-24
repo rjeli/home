@@ -30,7 +30,7 @@
       inherit (nixpkgs.lib.trivial) flip;
 
       # pkgs-stable = import nixpkgs-stable { system = "aarch64-darwin"; };
-      # todo dont hardcode system?
+      # todo dont hardcode system??
       pkgs-stable = nixpkgs-stable.legacyPackages.aarch64-darwin;
 
       darwinConfig =
@@ -47,6 +47,7 @@
                 systems = ["x86_64-linux"];
               };
             */
+            channel.enable = false;
             settings = {
               trusted-users = [
                 "@admin"
@@ -78,7 +79,8 @@
             # todo:             ^ broken
             stateVersion = 5;
             primaryUser = user;
-          } // (import ./system.nix { });
+          }
+          // (import ./system.nix { });
 
           homebrew = import ./brew.nix { };
 
