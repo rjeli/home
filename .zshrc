@@ -13,9 +13,44 @@ function prompt_nix_shell() {
   [[ -n $IN_NIX_SHELL ]] && echo " $name"
 }
 
-PROMPT+='%F{blue}$(prompt_git_branch)'
-function prompt_git_branch() {
+# PROMPT+='%F{blue}$(prompt_git)'
+PROMPT+='$(prompt_vcs)'
+
+function prompt_vcs() {
+    jj root --quiet &>/dev/null && prompt_jj || prompt_git
+}
+
+function prompt_git() {
+  echo -n '%F{blue}'
   git branch 2>/dev/null | sed -ne 's/^\* \(.*\)/ [\1]/p'
+}
+
+function prompt_jj() {
+    echo -n ' '
+    jj log -r 'latest(ancestors(@, 10) ~ (empty()~merges()))' \
+        --quiet --no-pager --no-graph --ignore-working-copy --color always \
+        -T "surround('(', ')', separate(' ', \
+            self.local_bookmarks(), \
+            self.change_id().shortest(5)\
+        ))" 2>/dev/null
+
+        #   coalesce(self.description().first_line(), '...'), \
+}
+
+function prompt_jj_2() {
+    jj log -r@ -n1 --ignore-working-copy --no-graph --color always -T '
+        separate(" ",
+            bookmarks.map(|x| truncate_end(8, x.name(), "…")).join(" "),
+            tags.map(|x| truncate_end(8, x.name(), "…")).join(" "),
+            surround("\"","\"", truncate_end(8, description.first_line(), "…")),
+            change_id.shortest(5),
+            commit_id.shortest(5),
+            if(empty, "(empty)"),
+            if(conflict, "(conflict)"),
+            if(divergent, "(divergent)"),
+            if(hidden, "(hidden)"),
+        )
+    '
 }
 
 if [[ -z $ORIG_SHLVL ]]; then
