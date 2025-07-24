@@ -114,6 +114,7 @@
         yt-dlp
         zim-tools
         samply
+        wget
 
         # build tools
         pkg-config

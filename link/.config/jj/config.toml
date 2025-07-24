@@ -3,3 +3,7 @@
 [user]
 name = "rjeli"
 email = "eli@rje.li"
+
+[ui]
+pager = ":builtin"
+default-command = "log"
