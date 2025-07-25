@@ -122,7 +122,7 @@
     "default_profile": "write",
     "default_model": {
       "provider": "openai",
-      "model": "o4-mini"
+      "model": "o3"
     }
   },
 
