@@ -180,7 +180,7 @@
         # discord
         # mpv
         # transmission_4-gtk
-        blender
+        # blender
         xquartz
 
         # latex
