@@ -144,17 +144,24 @@ gs () {
   git push "ssh://$host/~/.gitsync/$project.git" HEAD:master
 }
 
-tpl () {
+TPL_DIR="$HERE/templates"
+
+tpl() {
     if [[ -z "$1" ]]; then
         echo "usage: tpl <name>"
         return 1
     fi
 
-    local tplpath="$HERE/templates/$1"
+    local tplpath="$TPL_DIR/$1"
     if [[ ! -e $tplpath ]]; then
         echo "Template $tplpath does not exist."
         return 1
     fi
 
     cat "$tplpath"
+}
+
+compdef _tpl tpl
+_tpl() {
+    _arguments "1:name:_path_files -W '$TPL_DIR/'"
 }
