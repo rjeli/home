@@ -1,0 +1,6 @@
+#compdef tpl
+
+_tpl() {
+}
+
+_tpl "$@"

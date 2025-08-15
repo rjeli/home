@@ -1,3 +1,6 @@
+HERE="$HOME/repos/home"
+
+fpath+=($HERE/zsh-fpath)
 setopt INC_APPEND_HISTORY
 
 # ===== PROMPT =====
@@ -139,4 +142,19 @@ gs () {
 
   echo "Pushing local HEAD to $host:~/.gitsync/$project.git"
   git push "ssh://$host/~/.gitsync/$project.git" HEAD:master
+}
+
+tpl () {
+    if [[ -z "$1" ]]; then
+        echo "usage: tpl <name>"
+        return 1
+    fi
+
+    local tplpath="$HERE/templates/$1"
+    if [[ ! -e $tplpath ]]; then
+        echo "Template $tplpath does not exist."
+        return 1
+    fi
+
+    cat "$tplpath"
 }
