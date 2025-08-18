@@ -1,6 +1,5 @@
 {
   modulesPath,
-  lib,
   pkgs,
   ...
 }@args:
@@ -18,9 +17,10 @@
   };
   services.openssh.enable = true;
 
-  environment.systemPackages = map lib.lowPrio [
-    pkgs.curl
-    pkgs.gitMinimal
+  environment.systemPackages = with pkgs; [
+    curl
+    git
+    neofetch
   ];
 
   users.users.root.openssh.authorizedKeys.keys = [

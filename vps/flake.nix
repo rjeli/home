@@ -21,6 +21,7 @@
           disko.nixosModules.disko
           { disko.devices.disk.disk1.device = "/dev/vda"; }
           ./configuration.nix
+          ./hardware-configuration.nix
         ];
       };
 
