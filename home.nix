@@ -124,6 +124,7 @@
         samply
         wget
         pandoc
+        rsync
 
         # build tools
         pkg-config

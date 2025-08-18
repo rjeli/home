@@ -1,6 +1,14 @@
 {
   description = "darwin flake";
 
+  nixConfig = {
+    experimental-features = [
+      "nix-command"
+      "flakes"
+      "pipe-operators"
+    ];
+  };
+
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     darwin = {
@@ -59,7 +67,7 @@
                 "@admin"
                 user
               ];
-              experimental-features = "nix-command flakes";
+              # experimental-features = "nix-command flakes";
               accept-flake-config = true;
             };
           };
