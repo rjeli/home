@@ -123,6 +123,7 @@
         zim-tools
         samply
         wget
+        pandoc
 
         # build tools
         pkg-config
