@@ -121,8 +121,8 @@
     },
     "default_profile": "write",
     "default_model": {
-      "provider": "openai",
-      "model": "o3"
+      "provider": "zed.dev",
+      "model": "claude-opus-4-1"
     }
   },
 
