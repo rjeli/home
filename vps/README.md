@@ -8,6 +8,7 @@ nix run github:nix-community/nixos-anywhere -- \
 ```
 
 apply changes:
+
 ```sh
 nixos-rebuild switch --flake .#digitalocean --target-host "root@167.99.225.60"
 ```

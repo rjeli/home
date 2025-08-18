@@ -4,21 +4,25 @@ set -euo pipefail
 c_rst='\033[0m'
 c_bld='\033[1;97m'
 
+hdr() {
+    echo -e "${c_bld} === $1 === ${c_rst}"
+}
+
 here="$(dirname "$(readlink -f "$0")")"
 cd "$here"
 
-echo -e "${c_bld} === Updating bumped.lock === ${c_rst}"
+hdr "Updating bumped.lock"
 
 rm -f bumped.lock
 nix flake update --output-lock-file bumped.lock
 
 cfg=".#darwinConfigurations.$(hostname -s).system"
 
-echo -e "${c_bld} === Building new configuration === ${c_rst}"
+hdr "Building new configuration"
 
 new=$(nix build --reference-lock-file bumped.lock --no-link --print-out-paths $cfg)
 
-echo "new config path: $new"
+hdr "New config path: $new"
 
 diff=$(nix store diff-closures /run/current-system $new)
 

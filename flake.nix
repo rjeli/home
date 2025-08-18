@@ -11,6 +11,11 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    disko = {
+      url = "github:nix-community/disko";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     nixpkgs-stable.url = "github:nixos/nixpkgs/nixpkgs-25.05-darwin";
   };
 
@@ -21,6 +26,7 @@
       nixpkgs,
       darwin,
       home-manager,
+      disko,
       nixpkgs-stable,
     }:
 
@@ -141,6 +147,17 @@
           ];
         }
       );
+
+      nixosConfigurations.vega = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = [
+          ./lib/digitalocean.nix
+          disko.nixosModules.disko
+          { disko.devices.disk.disk1.device = "/dev/vda"; }
+          ./hosts/vega/configuration.nix
+          ./hosts/vega/hardware.nix
+        ];
+      };
     };
 
 }
