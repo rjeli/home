@@ -28,6 +28,7 @@
       forceLimitAdTracking = true;
       personalizedAdsMigrated = false;
     };
+    CustomUserPreferences."org.hammerspoon.Hammerspoon".MJConfigFile = "~/.config/hammerspoon/init.lua";
   };
 
   keyboard = {

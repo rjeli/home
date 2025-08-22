@@ -69,7 +69,10 @@
 
       darwinConfig =
         { user }:
-        { pkgs, ... }:
+        { pkgs, config, ... }:
+        let
+          here = "${config.home.homeDirectory}/repos/home";
+        in
         {
           # need newer nix for flake relative paths
           # todo use lix ?

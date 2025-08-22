@@ -16,8 +16,8 @@
     "alfred"
     "claude"
     "discord"
-    "ungoogled-chromium"
     "ghostty"
+    "hammerspoon"
     "iterm2"
     "jan"
     "obsidian"
@@ -26,6 +26,7 @@
     "stolendata-mpv"
     "spotify"
     "transmission"
+    "ungoogled-chromium"
     # "xquartz"
     "zed" # in nix as zed-editor, but there are soo many updates
     "zotero"
