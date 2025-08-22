@@ -6,6 +6,14 @@ prevRef="$curRef?ref=HEAD"
 
 brewfileAttr="darwinConfigurations.rj-m4.config.homebrew.brewfile"
 
-curBrewfile=$(nix eval --raw "$curRef#$brewfileAttr")
+# curBrewfile=$(nix eval --raw "$curRef#$brewfileAttr")
+curBrewfile=$(cat /etc/Brewfile)
 prevBrewfile=$(nix eval --raw "$prevRef#$brewfileAttr")
-diff $curBrewfile $prevBrewfile
+
+# printf "$curBrewfile"
+
+# echo -e CUR: $curBrewfile
+# echo -e PREV: $prevBrewfile
+
+echo diff:
+difft <(echo "$prevBrewfile") <(echo "$curBrewfile")

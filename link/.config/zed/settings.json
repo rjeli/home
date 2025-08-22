@@ -121,8 +121,8 @@
     },
     "default_profile": "ask",
     "default_model": {
-      "provider": "zed.dev",
-      "model": "claude-opus-4-1-thinking"
+      "provider": "anthropic",
+      "model": "claude-opus-4-1-latest"
     }
   },
 

@@ -115,6 +115,8 @@
         jq
         pv
         fish
+        delta
+        difftastic
 
         jujutsu
         jjui

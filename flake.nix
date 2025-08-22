@@ -134,6 +134,8 @@
             nh.packages.aarch64-darwin.default
           ];
 
+          environment.etc."Brewfile".text = config.homebrew.brewfile;
+
           launchd.user.agents = {
             userscript_server = {
               # command = "/Users/${user}/repos/home/bin/userscript_server";

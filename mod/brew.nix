@@ -13,7 +13,7 @@
       "discord"
       "ghostty"
       "iterm2"
-      # "jan"
+      "jan"
       "obsidian"
       "orbstack"
       "postgres-unofficial" # postgres.app
