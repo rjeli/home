@@ -21,8 +21,7 @@
       };
       shellAliases = {
         # switch = "sudo darwin-rebuild switch --flake ${here} && rehash";
-        switch = "nh darwin switch --ask";
-
+        switch = "nh darwin switch --ask && rehash";
         history = "history 0";
         nixsh = "nix-shell --run 'exec zsh' -p";
         subl = "'/Applications/Sublime Text.app/Contents/SharedSupport/bin/subl'";
@@ -135,7 +134,7 @@
         wget
         pandoc
         rsync
-        nh
+        # nh
 
         # build tools
         pkg-config

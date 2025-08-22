@@ -37,7 +37,10 @@
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
+    nh = {
+      url = "github:nix-community/nh";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     nixpkgs-stable.url = "github:nixos/nixpkgs/nixpkgs-25.05-darwin";
   };
 
@@ -55,6 +58,7 @@
       homebrew-cask,
 
       disko,
+      nh,
       nixpkgs-stable,
     }:
 
@@ -127,6 +131,7 @@
             # pkgs-stable.texlive.combined.scheme-full
 
             # pkgs.deno
+            nh.packages.aarch64-darwin.default
           ];
 
           launchd.user.agents = {

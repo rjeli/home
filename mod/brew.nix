@@ -23,7 +23,7 @@
       "ungoogled-chromium"
       # "xquartz"
       "zed" # in nix as zed-editor, but there are soo many updates
-      # "zotero"
+      "zotero"
     ];
   };
 }
