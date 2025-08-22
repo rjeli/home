@@ -116,10 +116,10 @@
             # todo:             ^ broken
             stateVersion = 5;
             primaryUser = user;
-          }
-          // (import ./system.nix { });
+          };
+          # // (import ./system.nix { });
 
-          homebrew = import ./brew.nix { };
+          # homebrew = import ./brew.nix { };
 
           environment.systemPackages = [
             # pull this from stable so it doesnt take ages to build
@@ -191,6 +191,10 @@
             )
 
             (darwinConfig { user = user; })
+            ./mod/system-defaults.nix
+            ./mod/hammerspoon.nix
+            ./mod/mas.nix
+            ./mod/brew.nix
 
             {
               home-manager = {

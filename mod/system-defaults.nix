@@ -1,7 +1,5 @@
-{ }:
 {
-  # how to modify power settings (minutes until sleep?)
-  defaults = {
+  system.defaults = {
     dock.autohide = true;
     trackpad.Clicking = true;
     finder = {
@@ -28,10 +26,9 @@
       forceLimitAdTracking = true;
       personalizedAdsMigrated = false;
     };
-    CustomUserPreferences."org.hammerspoon.Hammerspoon".MJConfigFile = "~/.config/hammerspoon/init.lua";
   };
 
-  keyboard = {
+  system.keyboard = {
     enableKeyMapping = true;
     remapCapsLockToControl = true;
   };
