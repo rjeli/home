@@ -161,8 +161,28 @@
         host: user:
         darwin.lib.darwinSystem {
           modules = [
-            (darwinConfig { user = user; })
+
             nix-homebrew.darwinModules.nix-homebrew
+            {
+              nix-homebrew = {
+                enable = true;
+                user = user;
+                taps = {
+                  "homebrew/homebrew-core" = homebrew-core;
+                  "homebrew/homebrew-cask" = homebrew-cask;
+                };
+                mutableTaps = false;
+                autoMigrate = true;
+              };
+            }
+            (
+              { config, ... }:
+              {
+                homebrew.taps = builtins.attrNames config.nix-homebrew.taps;
+              }
+            )
+
+            (darwinConfig { user = user; })
 
             home-manager.darwinModules.home-manager
             {

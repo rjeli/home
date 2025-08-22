@@ -88,7 +88,7 @@
 
     sessionPath = [
       "${here}/bin"
-      "/opt/homebrew/bin"
+      # "/opt/homebrew/bin"
       "$HOME/bin"
       "$HOME/.local/bin"
       "$HOME/.cargo/bin"

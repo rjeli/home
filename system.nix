@@ -22,6 +22,12 @@
       EnableTilingByEdgeDrag = true;
       EnableTopTilingByEdgeDrag = false;
     };
+    CustomSystemPreferences."com.apple.AdLib" = {
+      allowApplePersonalizedAdvertising = false;
+      allowIdentifierForAdvertising = false;
+      forceLimitAdTracking = true;
+      personalizedAdsMigrated = false;
+    };
   };
 
   keyboard = {
