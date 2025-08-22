@@ -1,8 +1,6 @@
 {
   here,
   pkgs,
-  # pkgs-stable,
-  # config,
   ...
 }:
 {

@@ -64,8 +64,10 @@
 
     let
 
-      inherit (builtins) mapAttrs;
+      inherit (builtins) filter mapAttrs readDir;
       inherit (nixpkgs.lib.trivial) flip;
+      inherit (nixpkgs.lib.filesystem) listFilesRecursive;
+      inherit (nixpkgs.lib.strings) hasSuffix;
 
       here = "/Users/eli/repos/home";
 
@@ -113,6 +115,8 @@
         "rj-m4" = "eli";
       };
 
+      darwinModules = listFilesRecursive ./mod/darwin |> filter (hasSuffix ".nix");
+
     in
 
     {
@@ -124,53 +128,56 @@
             platform = "aarch64-darwin";
             repo = "/Users/${user}/repos/home";
           };
-          modules = [
-            (
-              { platform, ... }:
+          modules =
+            darwinModules
+            ++ ([ ./mod/link.nix ])
+            ++ [
+              (
+                { platform, ... }:
+                {
+                  nix = {
+                    channel.enable = false;
+                    settings = {
+                      trusted-users = [
+                        "@admin"
+                        user
+                      ];
+                      experimental-features = "nix-command flakes pipe-operators";
+                      accept-flake-config = true;
+                    };
+                  };
+                  nixpkgs = {
+                    hostPlatform = platform;
+                    config.allowUnfree = true;
+                    overlays = import ./overlays.nix { inherit pkgs-stable; };
+                  };
+                }
+              )
+
+              darwinConfig
+
+              # ./mod/system-defaults.nix
+              # ./mod/hammerspoon.nix
+              # ./mod/mas.nix
+              # ./mod/brew.nix
+              # ./mod/link.nix
+              # ./mod/launchd.nix
+
+              home-manager.darwinModules.home-manager
               {
-                nix = {
-                  channel.enable = false;
-                  settings = {
-                    trusted-users = [
-                      "@admin"
-                      user
-                    ];
-                    experimental-features = "nix-command flakes pipe-operators";
-                    accept-flake-config = true;
+                home-manager = {
+                  useGlobalPkgs = true;
+                  useUserPackages = true;
+                  verbose = true;
+                  backupFileExtension = "bak";
+                  extraSpecialArgs = { inherit here; };
+                  users.${user} = {
+                    imports = [ ./home.nix ];
                   };
                 };
-                nixpkgs = {
-                  hostPlatform = platform;
-                  config.allowUnfree = true;
-                  overlays = import ./overlays.nix { inherit pkgs-stable; };
-                };
               }
-            )
 
-            darwinConfig
-
-            ./mod/system-defaults.nix
-            ./mod/hammerspoon.nix
-            ./mod/mas.nix
-            ./mod/brew.nix
-            ./mod/link.nix
-            ./mod/launchd.nix
-
-            home-manager.darwinModules.home-manager
-            {
-              home-manager = {
-                useGlobalPkgs = true;
-                useUserPackages = true;
-                verbose = true;
-                backupFileExtension = "bak";
-                extraSpecialArgs = { inherit here; };
-                users.${user} = {
-                  imports = [ ./home.nix ];
-                };
-              };
-            }
-
-          ];
+            ];
         }
       );
 
