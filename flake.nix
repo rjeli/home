@@ -7,6 +7,9 @@
       "flakes"
       "pipe-operators"
     ];
+
+    lazy-trees = true;
+    show-trace = true;
   };
 
   inputs = {
@@ -19,6 +22,17 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    nix-homebrew.url = "github:zhaofengli/nix-homebrew";
+    homebrew-core = {
+      url = "github:homebrew/homebrew-core";
+      flake = false;
+    };
+    homebrew-cask = {
+      url = "github:homebrew/homebrew-cask";
+      flake = false;
+    };
+
     disko = {
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -31,9 +45,15 @@
 
     {
       self,
+
       nixpkgs,
       darwin,
       home-manager,
+
+      nix-homebrew,
+      homebrew-core,
+      homebrew-cask,
+
       disko,
       nixpkgs-stable,
     }:
@@ -67,7 +87,7 @@
                 "@admin"
                 user
               ];
-              # experimental-features = "nix-command flakes";
+              experimental-features = "nix-command flakes pipe-operators";
               accept-flake-config = true;
             };
           };
@@ -142,6 +162,8 @@
         darwin.lib.darwinSystem {
           modules = [
             (darwinConfig { user = user; })
+            nix-homebrew.darwinModules.nix-homebrew
+
             home-manager.darwinModules.home-manager
             {
               home-manager = {

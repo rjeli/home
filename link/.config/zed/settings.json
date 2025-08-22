@@ -119,10 +119,10 @@
         "context_servers": {}
       }
     },
-    "default_profile": "write",
+    "default_profile": "ask",
     "default_model": {
       "provider": "zed.dev",
-      "model": "claude-opus-4-1"
+      "model": "claude-opus-4-1-thinking"
     }
   },
 

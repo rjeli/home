@@ -36,9 +36,9 @@
 
     fish = {
       enable = true;
-      plugins = with pkgs.fishPlugins; [
-        # tide
-      ];
+      # plugins = with pkgs.fishPlugins; [
+      #   # tide
+      # ];
     };
 
     git = {
@@ -62,6 +62,12 @@
       extraConfig = {
         push.autoSetupRemote = true;
         init.defaultBranch = "master";
+        sendemail = {
+          smtpserver = "smtp.fastmail.com";
+          smtpuser = "eli@rje.li";
+          smtpencryption = "ssl";
+          smtpserverport = "465";
+        };
       };
     };
 
@@ -125,6 +131,7 @@
         wget
         pandoc
         rsync
+        nh
 
         # build tools
         pkg-config
