@@ -46,7 +46,7 @@
 
   outputs =
 
-    {
+    inputs@{
       self,
 
       nixpkgs,
@@ -67,44 +67,21 @@
       inherit (builtins) mapAttrs;
       inherit (nixpkgs.lib.trivial) flip;
 
+      here = "/Users/eli/repos/home";
+
       # pkgs-stable = import nixpkgs-stable { system = "aarch64-darwin"; };
       # todo dont hardcode system??
       pkgs-stable = nixpkgs-stable.legacyPackages.aarch64-darwin;
 
       darwinConfig =
-        { user }:
-        { pkgs, config, ... }:
-        let
-          here = "${config.home.homeDirectory}/repos/home";
-        in
         {
-          # need newer nix for flake relative paths
-          # todo use lix ?
-          nix = {
-            # package = pkgs.nixVersions.nix_2_26;
-            /*
-              linux-builder = {
-                enable = true;
-                systems = ["x86_64-linux"];
-              };
-            */
-            channel.enable = false;
-            settings = {
-              trusted-users = [
-                "@admin"
-                user
-              ];
-              experimental-features = "nix-command flakes pipe-operators";
-              accept-flake-config = true;
-            };
-          };
-
-          nixpkgs = {
-            hostPlatform = "aarch64-darwin";
-            config.allowUnfree = true;
-            overlays = import ./overlays.nix { inherit pkgs-stable; };
-          };
-
+          pkgs,
+          config,
+          user,
+          platform,
+          ...
+        }:
+        {
           users.users.${user} = {
             name = user;
             home = "/Users/${user}";
@@ -121,45 +98,17 @@
             stateVersion = 5;
             primaryUser = user;
           };
-          # // (import ./system.nix { });
-
-          # homebrew = import ./brew.nix { };
 
           environment.systemPackages = [
             # pull this from stable so it doesnt take ages to build
             # todo its broken on 25.05. https://github.com/nixos/nixpkgs/issues/421014
             # pkgs-stable.texlive.combined.scheme-full
-
-            # pkgs.deno
-            nh.packages.aarch64-darwin.default
+            nh.packages.${platform}.default
           ];
-
-          environment.etc."Brewfile".text = config.homebrew.brewfile;
-
-          launchd.user.agents = {
-            userscript_server = {
-              # command = "/Users/${user}/repos/home/bin/userscript_server";
-              command = "${pkgs.deno}/bin/deno run -A /Users/${user}/repos/home/bin/userscript_server";
-
-              serviceConfig = {
-                RunAtLoad = true;
-                KeepAlive = true;
-                StandardOutPath = "/tmp/userscript_server.out.log";
-                StandardErrorPath = "/tmp/userscript_server.err.log";
-              };
-            };
-          };
 
         };
 
-      homeConfig =
-        { pkgs, config, ... }:
-        let
-          here = "${config.home.homeDirectory}/repos/home";
-        in
-        import ./home.nix { inherit pkgs config here; };
-
-      machines = {
+      darwinMachines = {
         "Polygon-N002HCY2C5" = "eriggs";
         "rj-m4" = "eli";
       };
@@ -167,51 +116,60 @@
     in
 
     {
-      darwinConfigurations = (flip mapAttrs) machines (
+      darwinConfigurations = (flip mapAttrs) darwinMachines (
         host: user:
         darwin.lib.darwinSystem {
+          specialArgs = {
+            inherit user here inputs;
+            platform = "aarch64-darwin";
+            repo = "/Users/${user}/repos/home";
+          };
           modules = [
-            home-manager.darwinModules.home-manager
-            nix-homebrew.darwinModules.nix-homebrew
-
-            {
-              nix-homebrew = {
-                enable = true;
-                user = user;
-                taps = {
-                  "homebrew/homebrew-core" = homebrew-core;
-                  "homebrew/homebrew-cask" = homebrew-cask;
-                };
-                mutableTaps = false;
-                autoMigrate = true;
-                extraEnv = {
-                  HOMEBREW_NO_ANALYTICS = "1";
-                };
-              };
-            }
-
             (
-              { config, ... }:
+              { platform, ... }:
               {
-                homebrew.taps = builtins.attrNames config.nix-homebrew.taps;
+                nix = {
+                  channel.enable = false;
+                  settings = {
+                    trusted-users = [
+                      "@admin"
+                      user
+                    ];
+                    experimental-features = "nix-command flakes pipe-operators";
+                    accept-flake-config = true;
+                  };
+                };
+                nixpkgs = {
+                  hostPlatform = platform;
+                  config.allowUnfree = true;
+                  overlays = import ./overlays.nix { inherit pkgs-stable; };
+                };
               }
             )
 
-            (darwinConfig { user = user; })
+            darwinConfig
+
             ./mod/system-defaults.nix
             ./mod/hammerspoon.nix
             ./mod/mas.nix
             ./mod/brew.nix
+            ./mod/link.nix
+            ./mod/launchd.nix
 
+            home-manager.darwinModules.home-manager
             {
               home-manager = {
                 useGlobalPkgs = true;
                 useUserPackages = true;
                 verbose = true;
                 backupFileExtension = "bak";
-                users.${user} = homeConfig;
+                extraSpecialArgs = { inherit here; };
+                users.${user} = {
+                  imports = [ ./home.nix ];
+                };
               };
             }
+
           ];
         }
       );

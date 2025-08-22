@@ -1,6 +1,31 @@
 {
+  inputs,
+  config,
+  user,
+  ...
+}:
+{
+  imports = [
+    inputs.nix-homebrew.darwinModules.nix-homebrew
+  ];
+
+  nix-homebrew = {
+    enable = true;
+    user = user;
+    taps = {
+      "homebrew/homebrew-core" = inputs.homebrew-core;
+      "homebrew/homebrew-cask" = inputs.homebrew-cask;
+    };
+    mutableTaps = false;
+    autoMigrate = true;
+    extraEnv = {
+      HOMEBREW_NO_ANALYTICS = "1";
+    };
+  };
+
   homebrew = {
     enable = true;
+    taps = builtins.attrNames config.nix-homebrew.taps;
     global.autoUpdate = false;
     onActivation = {
       cleanup = "zap";
@@ -26,4 +51,7 @@
       "zotero"
     ];
   };
+
+  # for diffing
+  environment.etc."Brewfile".text = config.homebrew.brewfile;
 }

@@ -2,7 +2,8 @@
   here,
   pkgs,
   # pkgs-stable,
-  config,
+  # config,
+  ...
 }:
 {
 
@@ -222,40 +223,40 @@
         */
       ];
 
-    file = (
-      let
-        inherit (builtins) listToAttrs;
-        inherit (pkgs.lib.path) removePrefix;
-        inherit (pkgs.lib.filesystem) listFilesRecursive;
-        inherit (config.lib.file) mkOutOfStoreSymlink;
+    # file = (
+    # let
+    # inherit (builtins) listToAttrs;
+    # inherit (pkgs.lib.path) removePrefix;
+    # inherit (pkgs.lib.filesystem) listFilesRecursive;
+    # inherit (config.lib.file) mkOutOfStoreSymlink;
 
-        pathToAttr = (
-          absPath:
-          let
-            relToHome = removePrefix ./link absPath;
-            relToHere = removePrefix ./. absPath;
-          in
-          {
-            name = relToHome;
-            value = {
-              source = mkOutOfStoreSymlink "${here}/${relToHere}";
-            };
-          }
-        );
+    # pathToAttr = (
+    # absPath:
+    # let
+    # relToHome = removePrefix ./link absPath;
+    # relToHere = removePrefix ./. absPath;
+    # in
+    # {
+    # name = relToHome;
+    # value = {
+    # source = mkOutOfStoreSymlink "${here}/${relToHere}";
+    # };
+    # }
+    # );
 
-        linkedFiles = (map pathToAttr (listFilesRecursive ./link));
+    # linkedFiles = (map pathToAttr (listFilesRecursive ./link));
 
-      in
+    # in
 
-      (listToAttrs linkedFiles)
-      /*
-        // {
-          "Library/Containers/com.userscripts.macos.Userscripts-Extension/Data/Documents/scripts" = {
-            source = mkOutOfStoreSymlink "${here}/user.js";
-          };
-        }
-      */
-    );
+    # (listToAttrs linkedFiles)
+    # /*
+    # // {
+    # "Library/Containers/com.userscripts.macos.Userscripts-Extension/Data/Documents/scripts" = {
+    # source = mkOutOfStoreSymlink "${here}/user.js";
+    # };
+    # }
+    # */
+    # );
   };
 
 }
