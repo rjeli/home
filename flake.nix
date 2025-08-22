@@ -161,8 +161,9 @@
         host: user:
         darwin.lib.darwinSystem {
           modules = [
-
+            home-manager.darwinModules.home-manager
             nix-homebrew.darwinModules.nix-homebrew
+
             {
               nix-homebrew = {
                 enable = true;
@@ -173,8 +174,12 @@
                 };
                 mutableTaps = false;
                 autoMigrate = true;
+                extraEnv = {
+                  HOMEBREW_NO_ANALYTICS = "1";
+                };
               };
             }
+
             (
               { config, ... }:
               {
@@ -184,7 +189,6 @@
 
             (darwinConfig { user = user; })
 
-            home-manager.darwinModules.home-manager
             {
               home-manager = {
                 useGlobalPkgs = true;

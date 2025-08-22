@@ -2,9 +2,13 @@
 {
   enable = true;
   global.autoUpdate = false;
-  onActivation.cleanup = "zap";
-  taps = [ ];
+  onActivation = {
+    cleanup = "zap";
+    extraFlags = [ "--verbose" ];
+  };
   brews = [
+    # if we install only nix version,
+    # nix-darwin keeps trying to install the brew anyway
     "mas"
   ];
   casks = [
@@ -12,7 +16,7 @@
     "alfred"
     "claude"
     "discord"
-    "eloston-chromium"
+    "ungoogled-chromium"
     "ghostty"
     "iterm2"
     "jan"

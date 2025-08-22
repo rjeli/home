@@ -20,7 +20,9 @@
         size = 999999999;
       };
       shellAliases = {
-        switch = "sudo darwin-rebuild switch --flake ${here} && rehash";
+        # switch = "sudo darwin-rebuild switch --flake ${here} && rehash";
+        switch = "nh darwin switch --ask";
+
         history = "history 0";
         nixsh = "nix-shell --run 'exec zsh' -p";
         subl = "'/Applications/Sublime Text.app/Contents/SharedSupport/bin/subl'";
@@ -34,12 +36,12 @@
       initContent = "source ${here}/.zshrc";
     };
 
-    fish = {
-      enable = true;
-      # plugins = with pkgs.fishPlugins; [
-      #   # tide
-      # ];
-    };
+    # fish = {
+    #   enable = true;
+    #   # plugins = with pkgs.fishPlugins; [
+    #   #   # tide
+    #   # ];
+    # };
 
     git = {
       enable = true;
@@ -84,6 +86,8 @@
     sessionVariables = {
       EDITOR = "vim";
       PNPM_HOME = "$HOME/.pnpm";
+
+      NH_DARWIN_FLAKE = "${here}";
     };
 
     sessionPath = [
