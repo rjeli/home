@@ -1,0 +1,11 @@
+#!/bin/bash
+set -euo pipefail
+
+curRef="$HOME/repos/home"
+prevRef="$curRef?ref=HEAD"
+
+brewfileAttr="darwinConfigurations.rj-m4.config.homebrew.brewfile"
+
+curBrewfile=$(nix eval --raw "$curRef#$brewfileAttr")
+prevBrewfile=$(nix eval --raw "$prevRef#$brewfileAttr")
+diff $curBrewfile $prevBrewfile
