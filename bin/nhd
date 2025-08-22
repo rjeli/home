@@ -1,19 +1,9 @@
 #!/bin/bash
 set -euo pipefail
 
-curRef="$HOME/repos/home"
-prevRef="$curRef?ref=HEAD"
+nh darwin build --diff=always
 
-brewfileAttr="darwinConfigurations.rj-m4.config.homebrew.brewfile"
-
-# curBrewfile=$(nix eval --raw "$curRef#$brewfileAttr")
-curBrewfile=$(cat /etc/Brewfile)
-prevBrewfile=$(nix eval --raw "$prevRef#$brewfileAttr")
-
-# printf "$curBrewfile"
-
-# echo -e CUR: $curBrewfile
-# echo -e PREV: $prevBrewfile
-
-echo diff:
-difft <(echo "$prevBrewfile") <(echo "$curBrewfile")
+attrBrewfile="darwinConfigurations.rj-m4.config.homebrew.brewfile"
+oldBrewfile=$(cat /etc/Brewfile)
+newBrewfile=$(nix eval --raw "$NH_DARWIN_FLAKE#$attrBrewfile")
+difft <(echo "$oldBrewfile") <(echo "$newBrewfile")
