@@ -7,7 +7,7 @@
     backupFileExtension = "bak";
     extraSpecialArgs = { inherit here; };
     users.${user} = {
-      imports = [ ../home.nix ];
+      # imports = [ ../home.nix ];
     };
   };
 }

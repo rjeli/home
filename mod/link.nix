@@ -34,16 +34,7 @@
             linkedFiles = (map pathToAttr (listFilesRecursive linkDir));
 
           in
-
           (listToAttrs linkedFiles)
-
-          /*
-            // {
-              "Library/Containers/com.userscripts.macos.Userscripts-Extension/Data/Documents/scripts" = {
-                source = mkOutOfStoreSymlink "${here}/user.js";
-              };
-            }
-          */
         );
       }
     )

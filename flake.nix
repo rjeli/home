@@ -13,7 +13,10 @@
   };
 
   inputs = {
+
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
+    nixpkgs-stable.url = "github:nixos/nixpkgs/nixpkgs-25.05-darwin";
+
     darwin = {
       url = "github:nix-darwin/nix-darwin/master";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -41,7 +44,7 @@
       url = "github:nix-community/nh";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    nixpkgs-stable.url = "github:nixos/nixpkgs/nixpkgs-25.05-darwin";
+
   };
 
   outputs =
@@ -66,8 +69,27 @@
 
       inherit (builtins) mapAttrs;
       inherit (nixpkgs.lib.trivial) flip;
-
       fset = nixpkgs.lib.fileset;
+
+      nixConfig =
+        { platform, user, ... }:
+        {
+          nix = {
+            channel.enable = false;
+            settings = {
+              trusted-users = [
+                "@admin"
+                user
+              ];
+              experimental-features = "nix-command flakes pipe-operators";
+              accept-flake-config = true;
+            };
+          };
+          nixpkgs = {
+            hostPlatform = platform;
+            config.allowUnfree = true;
+          };
+        };
 
       darwinMachines = {
         "Polygon-N002HCY2C5" = "eriggs";
@@ -91,32 +113,19 @@
             platform = "aarch64-darwin";
             repo = "/Users/${user}/repos/home";
             here = repo;
-            # pkgs-stable = nixpkgs-stable.legacyPackages.${platform};
+            pkgs-stable = nixpkgs-stable.legacyPackages.${platform};
           };
-          modules = (fset.union commonModules darwinModules |> fset.toList) ++ [
-            (
-              { platform, ... }:
-              {
-                nix = {
-                  channel.enable = false;
-                  settings = {
-                    trusted-users = [
-                      "@admin"
-                      user
-                    ];
-                    experimental-features = "nix-command flakes pipe-operators";
-                    accept-flake-config = true;
-                  };
-                };
-                nixpkgs = {
-                  hostPlatform = platform;
-                  config.allowUnfree = true;
-                  # overlays = import ./overlays.nix { inherit pkgs-stable; };
-                };
-              }
-            )
-
-          ];
+          modules = [
+            nixConfig
+          ]
+          ++ (
+            [
+              commonModules
+              darwinModules
+            ]
+            |> fset.unions
+            |> fset.toList
+          );
         }
       );
 

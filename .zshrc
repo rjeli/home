@@ -74,10 +74,6 @@ PROMPT+=' %f%% '
 
 # source "$HOME/.zshrc_extra"
 
-# === ALIASES ===
-
-# alias zed="$HOME/Applications/Zed.app/Contents/MacOS/cli"
-
 # === FUNCTIONS ===
 
 rsyncgi () {
