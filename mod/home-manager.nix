@@ -1,11 +1,11 @@
-{ user, here, ... }:
+{ user, ... }:
 {
   home-manager = {
     useGlobalPkgs = true;
     useUserPackages = true;
     verbose = true;
     backupFileExtension = "bak";
-    extraSpecialArgs = { inherit here; };
+    extraSpecialArgs = { };
     users.${user} = {
       # imports = [ ../home.nix ];
     };

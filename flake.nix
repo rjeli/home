@@ -67,8 +67,14 @@
 
     let
 
-      inherit (builtins) mapAttrs;
-      inherit (nixpkgs.lib.trivial) flip;
+      inherit (builtins) mapAttrs readDir;
+      inherit (nixpkgs.lib)
+        flatten
+        mapAttrsToList
+        flip
+        hasSuffix
+        hasInfix
+        ;
       fset = nixpkgs.lib.fileset;
 
       nixConfig =
@@ -102,9 +108,50 @@
       darwinModules = collectNix ./mod/darwin;
       commonModules = fset.difference allModules darwinModules;
 
+      collectForPlatform =
+        dir: platform:
+        readDir dir
+        |> mapAttrsToList (
+          name: type:
+          let
+            fullName = dir + "/${name}";
+          in
+          if type == "regular" && hasSuffix ".nix" name then
+            [ fullName ]
+          else if type == "directory" && hasInfix name platform then
+            collectForPlatform fullName platform
+          else
+            [ ]
+        )
+        |> flatten;
+
+      modulesForPlatform =
+        platform:
+        let
+          collect =
+            dir:
+            readDir dir
+            |> mapAttrsToList (
+              name: type:
+              let
+                fullName = dir + "/${name}";
+              in
+              if type == "regular" && hasSuffix ".nix" name then
+                [ fullName ]
+              else if type == "directory" && hasInfix name platform then
+                collect fullName
+              else
+                [ ]
+            )
+            |> flatten;
+        in
+        collect ./mod;
+
     in
 
     {
+      dbg = modulesForPlatform "aarch64-darwin";
+
       darwinConfigurations = (flip mapAttrs) darwinMachines (
         host: user:
         darwin.lib.darwinSystem {
@@ -112,7 +159,6 @@
             inherit user inputs;
             platform = "aarch64-darwin";
             repo = "/Users/${user}/repos/home";
-            here = repo;
             pkgs-stable = nixpkgs-stable.legacyPackages.${platform};
           };
           modules = [
