@@ -15,11 +15,13 @@
             inherit (pkgs.lib.filesystem) listFilesRecursive;
             inherit (config.lib.file) mkOutOfStoreSymlink;
 
+            linkDir = ../link;
+
             pathToAttr = (
               absPath:
               let
-                relToHome = removePrefix ../link absPath;
-                relToHere = removePrefix ./.. absPath;
+                relToHome = removePrefix linkDir absPath;
+                relToHere = removePrefix ../. absPath;
               in
               {
                 name = relToHome;
@@ -29,7 +31,7 @@
               }
             );
 
-            linkedFiles = (map pathToAttr (listFilesRecursive ../link));
+            linkedFiles = (map pathToAttr (listFilesRecursive linkDir));
 
           in
 

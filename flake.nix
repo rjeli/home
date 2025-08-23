@@ -64,58 +64,21 @@
 
     let
 
-      inherit (builtins) filter mapAttrs readDir;
+      inherit (builtins) mapAttrs;
       inherit (nixpkgs.lib.trivial) flip;
-      inherit (nixpkgs.lib.filesystem) listFilesRecursive;
-      inherit (nixpkgs.lib.strings) hasSuffix;
 
-      here = "/Users/eli/repos/home";
-
-      # pkgs-stable = import nixpkgs-stable { system = "aarch64-darwin"; };
-      # todo dont hardcode system??
-      pkgs-stable = nixpkgs-stable.legacyPackages.aarch64-darwin;
-
-      darwinConfig =
-        {
-          pkgs,
-          config,
-          user,
-          platform,
-          ...
-        }:
-        {
-          users.users.${user} = {
-            name = user;
-            home = "/Users/${user}";
-          };
-
-          programs.zsh.enable = true;
-
-          security.pam.services.sudo_local.touchIdAuth = true;
-
-          system = {
-            configurationRevision = self.rev or self.dirtyRev or null;
-            # backcompat: read `darwin-rebuild changelog` before changing
-            # todo:             ^ broken
-            stateVersion = 5;
-            primaryUser = user;
-          };
-
-          environment.systemPackages = [
-            # pull this from stable so it doesnt take ages to build
-            # todo its broken on 25.05. https://github.com/nixos/nixpkgs/issues/421014
-            # pkgs-stable.texlive.combined.scheme-full
-            nh.packages.${platform}.default
-          ];
-
-        };
+      fset = nixpkgs.lib.fileset;
 
       darwinMachines = {
         "Polygon-N002HCY2C5" = "eriggs";
         "rj-m4" = "eli";
       };
 
-      darwinModules = listFilesRecursive ./mod/darwin |> filter (hasSuffix ".nix");
+      collectNix = fset.fileFilter (f: f.type == "regular" && f.hasExt "nix");
+
+      allModules = collectNix ./mod;
+      darwinModules = collectNix ./mod/darwin;
+      commonModules = fset.difference allModules darwinModules;
 
     in
 
@@ -123,61 +86,37 @@
       darwinConfigurations = (flip mapAttrs) darwinMachines (
         host: user:
         darwin.lib.darwinSystem {
-          specialArgs = {
-            inherit user here inputs;
+          specialArgs = rec {
+            inherit user inputs;
             platform = "aarch64-darwin";
             repo = "/Users/${user}/repos/home";
+            here = repo;
+            # pkgs-stable = nixpkgs-stable.legacyPackages.${platform};
           };
-          modules =
-            darwinModules
-            ++ ([ ./mod/link.nix ])
-            ++ [
-              (
-                { platform, ... }:
-                {
-                  nix = {
-                    channel.enable = false;
-                    settings = {
-                      trusted-users = [
-                        "@admin"
-                        user
-                      ];
-                      experimental-features = "nix-command flakes pipe-operators";
-                      accept-flake-config = true;
-                    };
-                  };
-                  nixpkgs = {
-                    hostPlatform = platform;
-                    config.allowUnfree = true;
-                    overlays = import ./overlays.nix { inherit pkgs-stable; };
-                  };
-                }
-              )
-
-              darwinConfig
-
-              # ./mod/system-defaults.nix
-              # ./mod/hammerspoon.nix
-              # ./mod/mas.nix
-              # ./mod/brew.nix
-              # ./mod/link.nix
-              # ./mod/launchd.nix
-
-              home-manager.darwinModules.home-manager
+          modules = (fset.union commonModules darwinModules |> fset.toList) ++ [
+            (
+              { platform, ... }:
               {
-                home-manager = {
-                  useGlobalPkgs = true;
-                  useUserPackages = true;
-                  verbose = true;
-                  backupFileExtension = "bak";
-                  extraSpecialArgs = { inherit here; };
-                  users.${user} = {
-                    imports = [ ./home.nix ];
+                nix = {
+                  channel.enable = false;
+                  settings = {
+                    trusted-users = [
+                      "@admin"
+                      user
+                    ];
+                    experimental-features = "nix-command flakes pipe-operators";
+                    accept-flake-config = true;
                   };
                 };
+                nixpkgs = {
+                  hostPlatform = platform;
+                  config.allowUnfree = true;
+                  # overlays = import ./overlays.nix { inherit pkgs-stable; };
+                };
               }
+            )
 
-            ];
+          ];
         }
       );
 
