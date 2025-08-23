@@ -1,6 +1,6 @@
-{ inputs, ... }:
+{ home-manager, ... }:
 {
   imports = [
-    inputs.home-manager.darwinModules.home-manager
+    home-manager.darwinModules.home-manager
   ];
 }

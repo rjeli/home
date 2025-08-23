@@ -1,12 +1,13 @@
 {
-  inputs,
+  self,
+  nh,
   user,
   platform,
   ...
 }:
 {
   system = {
-    configurationRevision = inputs.self.rev or inputs.self.dirtyRev or null;
+    configurationRevision = self.rev or self.dirtyRev or null;
     stateVersion = 5;
     primaryUser = user;
   };
@@ -23,6 +24,6 @@
     # pull this from stable so it doesnt take ages to build
     # todo its broken on 25.05. https://github.com/nixos/nixpkgs/issues/421014
     # pkgs-stable.texlive.combined.scheme-full
-    inputs.nh.packages.${platform}.default
+    nh.packages.${platform}.default
   ];
 }

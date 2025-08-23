@@ -1,20 +1,22 @@
 {
-  inputs,
   config,
   user,
+  nix-homebrew,
+  homebrew-core,
+  homebrew-cask,
   ...
 }:
 {
   imports = [
-    inputs.nix-homebrew.darwinModules.nix-homebrew
+    nix-homebrew.darwinModules.nix-homebrew
   ];
 
   nix-homebrew = {
     enable = true;
     user = user;
     taps = {
-      "homebrew/homebrew-core" = inputs.homebrew-core;
-      "homebrew/homebrew-cask" = inputs.homebrew-cask;
+      "homebrew/homebrew-core" = homebrew-core;
+      "homebrew/homebrew-cask" = homebrew-cask;
     };
     mutableTaps = false;
     autoMigrate = true;

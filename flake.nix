@@ -55,14 +55,12 @@
       nixpkgs,
       darwin,
       home-manager,
-
-      nix-homebrew,
-      homebrew-core,
-      homebrew-cask,
+      nixpkgs-stable,
 
       disko,
       nh,
-      nixpkgs-stable,
+
+      ...
     }:
 
     let
@@ -75,7 +73,6 @@
         hasSuffix
         hasInfix
         ;
-      fset = nixpkgs.lib.fileset;
 
       nixConfig =
         { platform, user, ... }:
@@ -102,29 +99,6 @@
         "rj-m4" = "eli";
       };
 
-      collectNix = fset.fileFilter (f: f.type == "regular" && f.hasExt "nix");
-
-      allModules = collectNix ./mod;
-      darwinModules = collectNix ./mod/darwin;
-      commonModules = fset.difference allModules darwinModules;
-
-      collectForPlatform =
-        dir: platform:
-        readDir dir
-        |> mapAttrsToList (
-          name: type:
-          let
-            fullName = dir + "/${name}";
-          in
-          if type == "regular" && hasSuffix ".nix" name then
-            [ fullName ]
-          else if type == "directory" && hasInfix name platform then
-            collectForPlatform fullName platform
-          else
-            [ ]
-        )
-        |> flatten;
-
       modulesForPlatform =
         platform:
         let
@@ -150,27 +124,21 @@
     in
 
     {
-      dbg = modulesForPlatform "aarch64-darwin";
-
       darwinConfigurations = (flip mapAttrs) darwinMachines (
         host: user:
         darwin.lib.darwinSystem {
-          specialArgs = rec {
-            inherit user inputs;
+          specialArgs = inputs // rec {
+            inherit user;
             platform = "aarch64-darwin";
             repo = "/Users/${user}/repos/home";
+            repoSrc = ./.;
             pkgs-stable = nixpkgs-stable.legacyPackages.${platform};
           };
-          modules = [
-            nixConfig
-          ]
-          ++ (
+          modules = (
             [
-              commonModules
-              darwinModules
+              nixConfig
             ]
-            |> fset.unions
-            |> fset.toList
+            ++ (modulesForPlatform "aarch64-darwin")
           );
         }
       );

@@ -1,42 +1,40 @@
 {
-  pkgs,
   repo,
+  repoSrc,
+  lib,
   ...
 }:
 {
   home-manager.sharedModules = [
-    (
-      { config, ... }:
-      {
-        home.file = (
+    (hm: {
+      home.file = (
+        let
+
+          inherit (builtins) listToAttrs;
+          inherit (lib.path) removePrefix;
+          inherit (lib.filesystem) listFilesRecursive;
+          inherit (hm.config.lib.file) mkOutOfStoreSymlink;
+
+          linkDir = repoSrc + /link;
+
+        in
+
+        listFilesRecursive linkDir
+        |> map (
+          path:
           let
-            inherit (builtins) listToAttrs;
-            inherit (pkgs.lib.path) removePrefix;
-            inherit (pkgs.lib.filesystem) listFilesRecursive;
-            inherit (config.lib.file) mkOutOfStoreSymlink;
-
-            linkDir = ../link;
-
-            pathToAttr = (
-              absPath:
-              let
-                relToHome = removePrefix linkDir absPath;
-                relToHere = removePrefix ../. absPath;
-              in
-              {
-                name = relToHome;
-                value = {
-                  source = mkOutOfStoreSymlink "${repo}/${relToHere}";
-                };
-              }
-            );
-
-            linkedFiles = (map pathToAttr (listFilesRecursive linkDir));
-
+            relToHome = removePrefix linkDir path;
           in
-          (listToAttrs linkedFiles)
-        );
-      }
-    )
+          {
+            name = relToHome;
+            value = {
+              source = mkOutOfStoreSymlink "${repo}/link/${relToHome}";
+            };
+          }
+        )
+        |> listToAttrs
+
+      );
+    })
   ];
 }
